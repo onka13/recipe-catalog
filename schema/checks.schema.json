@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "checks.schema.json",
+  "title": "Check report (release/checks.json)",
+  "description": "The result of the apply-and-verify check for every scaffold and recipe of a release, keyed by content hash.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "catalogVersion", "items"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "catalogVersion": { "$ref": "defs.schema.json#/$defs/semver" },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["kind", "id", "version", "contentHash", "status", "checkedAt", "steps"],
+        "properties": {
+          "kind": { "enum": ["scaffold", "recipe"] },
+          "id": { "$ref": "defs.schema.json#/$defs/id" },
+          "version": { "$ref": "defs.schema.json#/$defs/semver" },
+          "contentHash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+          "status": { "enum": ["passed", "failed"] },
+          "checkedAt": { "type": "string" },
+          "image": { "type": "string", "description": "The toolchain image the check ran in" },
+          "agent": { "type": "string", "description": "The coding agent that carried out the instructions, when the item has any" },
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "object", "additionalProperties": false, "required": ["step", "status"],
+              "properties": {
+                "step": { "type": "string" }, "command": { "type": "string" }, "status": { "enum": ["passed", "failed", "skipped"] },
+                "exitCode": { "type": "integer" }, "output": { "type": "string", "description": "The end of the output, for failed steps" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

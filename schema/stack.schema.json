@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stack.schema.json",
+  "title": "STACK.md front matter",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "id",
+    "name",
+    "language",
+    "projectType",
+    "requiredTools",
+    "deliveryScriptsRecipe",
+    "defaultScaffold",
+    "addPackage",
+    "addDevPackage"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "id": {
+      "$ref": "defs.schema.json#/$defs/id",
+      "description": "<project-type>-<framework>[-<variant>], unique across the catalog"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "language": {
+      "$ref": "defs.schema.json#/$defs/language"
+    },
+    "projectType": {
+      "enum": [
+        "mobile-app",
+        "web-app",
+        "backend-api",
+        "cli",
+        "library",
+        "desktop-app"
+      ]
+    },
+    "requiredTools": {
+      "$ref": "defs.schema.json#/$defs/names",
+      "description": "Tools the stack's toolchain image must provide"
+    },
+    "deliveryScriptsRecipe": {
+      "$ref": "defs.schema.json#/$defs/id",
+      "description": "The recipe that writes scripts/build.sh and scripts/test.sh"
+    },
+    "defaultScaffold": {
+      "$ref": "defs.schema.json#/$defs/id",
+      "description": "The scaffold the check starts from when it verifies a recipe"
+    },
+    "addPackage": {
+      "type": "string",
+      "pattern": "\\{\\{NAME\\}\\}",
+      "description": "Adds one package; {{NAME}} and {{VERSION}} are filled in"
+    },
+    "addDevPackage": {
+      "type": "string",
+      "pattern": "\\{\\{NAME\\}\\}",
+      "description": "Adds one development-only package"
+    }
+  }
+}

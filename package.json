@@ -1,0 +1,25 @@
+{
+  "name": "recipe-catalog",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Scaffolds and recipes for every language and project type, as Markdown files, with the tools to lint, check, build and edit them.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": { "catalog": "dist/src/cli.js" },
+  "exports": { ".": "./dist/src/index.js" },
+  "files": ["dist/src", "schema"],
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test \"dist/test/*.test.js\"",
+    "catalog": "node dist/src/cli.js"
+  },
+  "dependencies": {
+    "ajv": "8.17.1",
+    "yaml": "2.6.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.2",
+    "typescript": "5.8.3"
+  }
+}
