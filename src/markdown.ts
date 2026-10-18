@@ -1,5 +1,5 @@
 import YAML from 'yaml';
-import type { ChangelogEntry, Instruction, Section } from './model.js';
+import type { ChangelogEntry, Convention, Instruction, Section } from './model.js';
 
 const FRONT_MATTER = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/;
 const FENCE = /^\s*(```|~~~)/;
@@ -52,6 +52,14 @@ export function parseBody(body: string): ParsedBody {
 
 export function parseInstructions(text: string): Instruction[] {
   return sections(text, 3).sections.map((s) => ({ target: s.title, instruction: s.text }));
+}
+
+export function parseConventions(text: string): Convention[] {
+  return sections(text, 3).sections.map((s) => ({ pattern: s.title, rule: s.text }));
+}
+
+export function renderConventions(conventions: Convention[]): string {
+  return conventions.map((c) => `### ${c.pattern}\n${c.rule}`).join('\n\n');
 }
 
 /** `### <version>` entries with `- ` notes; a line that is not a list item continues the note before it. */

@@ -2,7 +2,7 @@
 schemaVersion: 1
 id: node-generic-repository
 name: Node.js Generic Repository (BaseMongo & TenantMongo Architecture)
-version: 1.0.0
+version: 1.0.1
 language: typescript
 stack: backend-node-tsoa
 category: storage
@@ -36,12 +36,15 @@ verify:
 
 Layered generic repository pattern isolating MongoDB persistence behind clean database-agnostic QueryModels, supporting optional soft-delete (for Reference vs Business entities), atomic increments, partial updates, and multi-tenancy via TenantMongoRepository inheritance.
 
-## Instructions
+## Conventions
 
 ### src/features/*/infrastructure/repositories/*Repository.ts
 Extend BaseMongoRepository for global/reference collections (e.g. Country, Currency, SystemConfig with softDelete: false) or TenantMongoRepository for tenant-scoped business entities. Implement domain-specific methods by composing findBy, findByPartial, or incrementBy without leaking Mongoose Document types into domain use cases.
 
 ## Changelog
+
+### 1.0.1
+- Rules for code written later (file patterns) moved from Instructions to Conventions; they are no longer applied at install.
 
 ### 1.0.0
 - First version.

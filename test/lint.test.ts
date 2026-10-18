@@ -62,6 +62,12 @@ describe('lint (format section 7.1)', () => {
     assert.match(errorsOf(root).map((p) => p.message).join('\n'), /\{\{ADMOB_APP_ID\}\} in ### android\/app\/src\/main\/AndroidManifest.xml is not a declared parameter/);
   });
 
+  it('an instruction whose target is a file pattern is rejected (it belongs under ## Conventions)', () => {
+    const root = fixture();
+    edit(root, `${ADMOB}/RECIPE.md`, (t) => t.replace('### lib/main.dart', '### lib/**/*.dart'));
+    assert.match(errorsOf(root).map((p) => p.message).join('\n'), /lib\/\*\*\/\*\.dart is a pattern/);
+  });
+
   it('a dependency cycle is rejected', () => {
     const root = fixture();
     edit(root, `${FLUTTER}/recipes/core/core-foundation/RECIPE.md`, (t) => t.replace('order: ', 'dependsOn:\n  - admob-monetization\norder: '));

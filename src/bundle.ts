@@ -13,6 +13,7 @@ export interface BundleItem {
   description: string;
   changelog?: Array<{ version: string; notes: string[] }>;
   instructions?: Array<{ target: string; instruction: string }>;
+  conventions?: Array<{ pattern: string; rule: string }>;
   files?: BundleFile[];
   contentHash?: string;
 }
@@ -44,6 +45,8 @@ function itemContent(item: ScaffoldItem | RecipeItem): Omit<BundleItem, 'path' |
   return {
     meta: orderedMeta(item), description: item.description, changelog: item.changelog, files: item.files,
     ...(item.kind === 'recipe' ? { instructions: item.instructions } : {}),
+    // Only present when the recipe has conventions, so the hash of a recipe without them is what it was before.
+    ...(item.kind === 'recipe' && item.conventions.length ? { conventions: item.conventions } : {}),
   };
 }
 

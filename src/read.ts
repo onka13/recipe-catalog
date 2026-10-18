@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { FormatError, parseBody, parseChangelog, parseInstructions, splitFrontMatter } from './markdown.js';
+import { FormatError, parseBody, parseChangelog, parseConventions, parseInstructions, splitFrontMatter } from './markdown.js';
 import type { Catalog, Category, Item, ItemFile, Problem, RecipeItem, ScaffoldItem, Section, StackItem } from './model.js';
 import { ITEM_FILE, MAX_FILE_BYTES } from './model.js';
 
@@ -101,8 +101,9 @@ export function readRecipe(root: string, itemPath: string, problems: Problem[]):
   if (!text) return null;
   return {
     kind: 'recipe', path: itemPath, meta: text.meta as RecipeItem['meta'], title: text.title, description: text.description,
-    instructions: parseInstructions(take(text.sections, 'Instructions')), changelog: parseChangelog(take(text.sections, 'Changelog')),
-    files: readItemFiles(root, itemPath, problems), extraSections: others(text.sections, ['Instructions', 'Changelog']),
+    instructions: parseInstructions(take(text.sections, 'Instructions')), conventions: parseConventions(take(text.sections, 'Conventions')),
+    changelog: parseChangelog(take(text.sections, 'Changelog')), files: readItemFiles(root, itemPath, problems),
+    extraSections: others(text.sections, ['Instructions', 'Conventions', 'Changelog']),
   };
 }
 

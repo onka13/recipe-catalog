@@ -2,7 +2,7 @@
 schemaVersion: 1
 id: node-observability-and-env
 name: Node.js Structured Logger & Validated AppConfig
-version: 1.0.0
+version: 1.0.1
 language: typescript
 stack: backend-node-tsoa
 category: observability
@@ -36,10 +36,15 @@ JSON structured logger with contextual tags, correlation ID tracking, and normal
 ### package.json
 Configure canonical environment serve scripts: "serve-dev": "NODE_ENV=dev npm run serve", "serve-staging": "NODE_ENV=staging npm run serve", "serve-prod": "NODE_ENV=prod npm run serve".
 
+## Conventions
+
 ### src/**/*.ts
 CRITICAL ARCHITECTURAL MANDATE: Never use 'process.env' directly in controllers, services, or repositories. Import 'appConfig' from 'src/core/config/appConfig'. Do not add arbitrary speculative sample variables to appConfig; only define required, verified configuration keys.
 
 ## Changelog
+
+### 1.0.1
+- Rules for code written later (file patterns) moved from Instructions to Conventions; they are no longer applied at install.
 
 ### 1.0.0
 - First version.

@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { joinFrontMatter, renderBody, renderChangelog, renderInstructions } from './markdown.js';
+import { joinFrontMatter, renderBody, renderChangelog, renderConventions, renderInstructions } from './markdown.js';
 import type { Item, Section } from './model.js';
 import { ITEM_FILE } from './model.js';
 import { propertyOrder } from './schemas.js';
@@ -22,6 +22,7 @@ function bodySections(item: Item): Section[] {
   if (item.kind === 'stack') return item.extraSections;
   const out: Section[] = [];
   if (item.kind === 'recipe' && item.instructions.length) out.push({ title: 'Instructions', text: renderInstructions(item.instructions) });
+  if (item.kind === 'recipe' && item.conventions.length) out.push({ title: 'Conventions', text: renderConventions(item.conventions) });
   out.push(...item.extraSections, { title: 'Changelog', text: renderChangelog(item.changelog) });
   return out;
 }

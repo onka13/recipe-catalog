@@ -124,7 +124,8 @@ export class CatalogChecker {
     if (scaffold.meta.mandatoryRecipes.includes(recipe.meta.id)) return report(recipe, [baseStep], true, this.options);
     const dir = path.join(this.options.workDir, recipe.meta.id);
     fs.rmSync(dir, { recursive: true, force: true });
-    fs.cpSync(base.dir, dir, { recursive: true });
+    // Relative symlinks (node_modules/.bin) stay relative, so they still resolve inside the container.
+    fs.cpSync(base.dir, dir, { recursive: true, verbatimSymlinks: true });
     const applied = new Set(scaffold.meta.mandatoryRecipes);
     const { passed, steps } = inSandbox(dir, stack, this.catalog, this.options, (ws) =>
       dependencyOrder(this.catalog, recipe, applied).every((dep) => applyRecipe(ws, dep))

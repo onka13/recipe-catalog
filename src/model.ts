@@ -79,6 +79,12 @@ export interface Instruction {
   instruction: string;
 }
 
+/** A rule for code written after the recipe is applied, for the files a pattern matches (`## Conventions`). */
+export interface Convention {
+  pattern: string;
+  rule: string;
+}
+
 /** A level-2 body section that tools do not interpret; kept so that writing an item back loses nothing. */
 export interface Section {
   title: string;
@@ -110,6 +116,7 @@ export interface RecipeItem extends ItemBase {
   kind: 'recipe';
   meta: RecipeMeta;
   instructions: Instruction[];
+  conventions: Convention[];
   changelog: ChangelogEntry[];
   files: ItemFile[];
 }

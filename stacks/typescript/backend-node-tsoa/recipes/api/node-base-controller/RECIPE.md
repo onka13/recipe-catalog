@@ -2,7 +2,7 @@
 schemaVersion: 1
 id: node-base-controller
 name: Node.js TSOA Base Controller & Envelope Dispatcher
-version: 1.0.0
+version: 1.0.1
 language: typescript
 stack: backend-node-tsoa
 category: api
@@ -30,12 +30,15 @@ verify:
 
 Authoritative TSOA base controller providing authenticated tenant and user context extraction, standardized ServiceResult<T> envelope responses, and strict HTTP status mapping without bypassing OpenAPI/Swagger generation.
 
-## Instructions
+## Conventions
 
 ### src/features/*/presentation/controllers/*Controller.ts
 Extend BaseController for all feature route controllers. Annotate methods with TSOA decorators (@Route, @Get, @Post, @SuccessResponse) and return this.successResponse(data) directly. Never call res.status().json() directly so that TSOA OpenAPI generator can infer exact response schemas.
 
 ## Changelog
+
+### 1.0.1
+- Rules for code written later (file patterns) moved from Instructions to Conventions; they are no longer applied at install.
 
 ### 1.0.0
 - First version.

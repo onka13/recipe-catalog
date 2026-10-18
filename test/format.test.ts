@@ -30,6 +30,14 @@ describe('read and write', () => {
     assert.deepEqual(afterWrite?.instructions, before.instructions);
   });
 
+  it('conventions are read, written back and carried in the bundle', () => {
+    const { catalog } = readCatalog(REPO);
+    const recipe = catalog.recipes.find((r) => r.meta.id === 'node-base-controller');
+    assert.equal(recipe?.conventions[0].pattern, 'src/features/*/presentation/controllers/*Controller.ts');
+    const bundled = buildBundle(catalog, '0.1.0').recipes.find((r) => r.meta.id === 'node-base-controller');
+    assert.equal(bundled?.conventions?.length, 1);
+  });
+
   it('headings inside fenced code are not sections', () => {
     const body = '# T\n\nDesc.\n\n## Instructions\n\n### a.sh\nAdd:\n```bash\n## not a heading\n# also not\n```\n\n## Changelog\n\n### 1.0.0\n- First version.\n';
     const parsed = parseBody(body);

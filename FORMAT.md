@@ -124,7 +124,8 @@ No other field is allowed.
 ### 4.2 Body
 
 - `# <name>`, then the description: everything up to the first `## ` heading.
-- `## Instructions`: one `### <target path>` subsection per project file a coding agent must change (files the project already has, which cannot be shipped as whole files). The text is the instruction. Headings inside an instruction go in a fenced code block or use four or more `#`.
+- `## Instructions`: one `### <target path>` subsection per project file a coding agent must change when the recipe is applied (files the project already has, which cannot be shipped as whole files). The target is one file, never a pattern. The text is the instruction. Headings inside an instruction go in a fenced code block or use four or more `#`.
+- `## Conventions`: one `### <file pattern>` subsection per rule for code written after the recipe is applied ("extend `BaseController` in every `src/features/*/presentation/controllers/*Controller.ts`"). Conventions are not applied or checked at install; tools that write code later pass them on for the files a pattern matches.
 - `## Changelog`: one `### <version>` subsection per released version, newest first, each with `- ` notes.
 - Other `## ` sections are allowed; tools keep them and do not interpret them.
 
@@ -188,7 +189,7 @@ A TypeScript Express API with build, lint and test scripts.
    2. apply the item's `dependsOn`, then the item: its files, then its packages, with its parameters at their defaults;
    3. a coding agent carries out each `### <target path>` instruction, started without interaction;
    4. run the tier's `scripts/build.sh` and `scripts/test.sh`, then the item's `verify` commands;
-   5. fail when a command exits non-zero or an instruction's target file did not change, naming the step, the command and its output.
+   5. fail when a command exits non-zero or an instruction's target file did not change, naming the step, the command and its output. Conventions are not part of the check.
 
    Steps 1 and 2 run on every pull request, and so does step 4 when the item has no instructions. Step 3 needs a model key, so on a pull request it runs when a maintainer starts it; a release needs the full run to have passed for every item. Contributors run the same check with their own agent before opening a pull request.
 4. **Tests are encouraged.** A recipe that adds files should ship a test under `files/` that `scripts/test.sh` runs. The lint warns when one is missing; it becomes a rule once the existing items have tests.

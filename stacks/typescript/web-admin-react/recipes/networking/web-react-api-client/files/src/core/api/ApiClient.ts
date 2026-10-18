@@ -1,20 +1,20 @@
 export interface ServiceResponseEnvelope<T> {
   success: boolean;
   data?: T;
-  meta?: Record<string, any>;
+  meta?: Record<string, unknown>;
   error?: {
     code: string;
     message: string;
-    details?: any;
+    details?: unknown;
   };
 }
 
 export class ApiError extends Error {
   public readonly code: string;
-  public readonly details?: any;
+  public readonly details?: unknown;
   public readonly status: number;
 
-  constructor(message: string, code: string = 'API_ERROR', status: number = 400, details?: any) {
+  constructor(message: string, code: string = 'API_ERROR', status: number = 400, details?: unknown) {
     super(message);
     this.name = 'ApiError';
     this.code = code;
@@ -48,16 +48,12 @@ export class ApiClient {
       ...options,
       headers: {
         ...this.getHeaders(),
-        ...(options.headers as any)
+        ...(options.headers as Record<string, string> | undefined)
       }
     });
 
-    let payload: any;
-    try {
-      payload = await response.json();
-    } catch {
-      payload = null;
-    }
+    // The body is JSON or empty; an empty or non-JSON body leaves the payload null.
+    const payload = (await response.json().catch(() => null)) as (Partial<ServiceResponseEnvelope<T>> & { message?: string }) | null;
 
     if (!response.ok) {
       const errMessage = payload?.error?.message || payload?.message || `HTTP ${response.status} Request Failed`;
@@ -85,14 +81,14 @@ export class ApiClient {
     return this.request<T>(endpoint, { method: 'GET' });
   }
 
-  public post<T>(endpoint: string, body?: any): Promise<T> {
+  public post<T>(endpoint: string, body?: unknown): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'POST',
       body: body !== undefined ? JSON.stringify(body) : undefined
     });
   }
 
-  public put<T>(endpoint: string, body?: any): Promise<T> {
+  public put<T>(endpoint: string, body?: unknown): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'PUT',
       body: body !== undefined ? JSON.stringify(body) : undefined

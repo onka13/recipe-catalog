@@ -59,8 +59,10 @@ export function lintRecipe(item: RecipeItem, report: Report): void {
   for (const p of item.meta.onlyIfMissing ?? []) if (!paths.includes(p)) report(`onlyIfMissing names ${p}, which is not under files/.`);
   for (const i of item.instructions) {
     if (!i.instruction) report(`Instruction ### ${i.target} is empty.`);
+    if (/[*?[\]{}]/.test(i.target)) report(`Instruction target ${i.target} is a pattern; an instruction changes one existing file. Put rules for code written later under ## Conventions.`);
     if (i.target.startsWith('/') || i.target.split('/').includes('..')) report(`Instruction target ${i.target} must be a relative path inside the tier.`);
   }
+  for (const c of item.conventions) if (!c.rule) report(`Convention ### ${c.pattern} is empty.`);
   if ((item.meta.dependsOn ?? []).includes(item.meta.id)) report('A recipe cannot depend on itself.');
   const hasCode = item.files.length > 0 && item.meta.standardType !== 'delivery-scripts';
   if (hasCode && !paths.some((p) => TEST_PATH.test(p))) report('The recipe adds files but no test under files/ (format section 7.4).', 'warning');

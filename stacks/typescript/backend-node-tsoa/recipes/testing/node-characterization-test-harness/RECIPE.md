@@ -2,7 +2,7 @@
 schemaVersion: 1
 id: node-characterization-test-harness
 name: Node.js Characterization & Golden Master Test Harness
-version: 1.0.0
+version: 1.0.1
 language: typescript
 stack: backend-node-tsoa
 category: testing
@@ -32,12 +32,15 @@ verify:
 
 Michael Feathers Golden Master / Characterization Test Harness with PII Redaction and Dry-Run side-effect guards. Enables QA and Coder agents to record deterministic, compliant snapshots of legacy endpoints to verify 100% mathematical parity during Strangler Fig refactoring.
 
-## Instructions
+## Conventions
 
 ### tests/characterization/*.spec.ts
 Before refactoring any legacy route, create a characterization test recording its baseline behavior. Always use CharacterizationHarness with PiiMasker enabled. When testing mutation routes, set dryRun: true and override external gateway adapters in the IoC container with mocks.
 
 ## Changelog
+
+### 1.0.1
+- Rules for code written later (file patterns) moved from Instructions to Conventions; they are no longer applied at install.
 
 ### 1.0.0
 - First version.

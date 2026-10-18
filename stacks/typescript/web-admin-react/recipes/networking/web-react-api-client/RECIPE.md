@@ -2,7 +2,7 @@
 schemaVersion: 1
 id: web-react-api-client
 name: React SPA API Client & ServiceResult Envelope Bridge
-version: 1.0.0
+version: 1.0.1
 language: typescript
 stack: web-admin-react
 category: networking
@@ -29,12 +29,16 @@ verify:
 
 Production TypeScript API client for React SPA portals. Handles ServiceResult<T> unwrapping, correlation ID propagation, centralized toast notifications for AppError codes, and client state-version headers (x-user-data-version).
 
-## Instructions
+## Conventions
 
 ### src/pages/**/*.tsx
 Use apiClient.get<T> / apiClient.post<T> from 'src/core/api' instead of raw fetch calls to automatically unwrap ServiceResult envelopes and handle errors.
 
 ## Changelog
+
+### 1.0.1
+- Rules for code written later (file patterns) moved from Instructions to Conventions; they are no longer applied at install.
+- Fixed: `npm run lint` failed on eight explicit `any` types in `ApiClient.ts`; they are `unknown` or typed now.
 
 ### 1.0.0
 - First version.
