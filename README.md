@@ -41,9 +41,34 @@ npm run catalog -- verify admob-monetization --image recipe-catalog-toolchain --
 npm run catalog -- release --version 0.2.0 --image recipe-catalog-toolchain --agent claude
 ```
 
-`--agent` is `claude` (Claude Code), `codex` (OpenAI Codex CLI) or `copilot` (GitHub Copilot CLI), run in its non-interactive mode in the check folder; `--agent-bin` points at its executable when it is not on the PATH. Without `--agent`, `verify` stops at the first instruction. The project folders stay in `.check/` for inspection.
+`--agent` is `claude` (Claude Code), `codex` (OpenAI Codex CLI) or `copilot` (GitHub Copilot CLI), run in its non-interactive mode in the check folder; `--agent-bin` points at its executable when it is not on the PATH, and `--agent-model` picks the agent's model (for example `haiku`). Without `--agent`, `verify` stops at the first instruction. The project folders stay in `.check/` for inspection.
 
-Coming next: `harvest` (turn a capability of your own project into a recipe, with the coding agent you already use) and `studio` (a local editor).
+## Harvest a recipe from your own project
+
+Turn a capability you built into a recipe with the coding agent you already use. The tool has no model client and asks for no key:
+
+```bash
+npm run catalog -- harvest ~/code/my-app "AdMob ads with consent" --stack mobile-flutter --agent claude
+```
+
+It reads your project with Code Intelligence, without changing it, and gives the agent the files around the capability. The agent then writes the recipe in `.harvest/` following `skills/harvest-recipe/SKILL.md`. The recipe is filed under `stacks/` only when it passes the lint and holds none of your secrets, account ids or package name. If it fails, the agent gets the problems back (`--fix-rounds`, default 2). Add `--image <toolchain image>` to be offered the full check afterwards (`--verify` runs it without asking). Use `--files a,b` when the capability's words do not find the right files, and `--category` to fix the category.
+
+You can also ask your agent directly inside a clone of this repository ("harvest the AdMob ads from ~/code/my-app"). Claude Code loads the skill from `.claude/skills/`, and Codex and Copilot find it through `AGENTS.md`. The skill uses `catalog context` to read the project and `catalog add` to check and file the item.
+
+## Catalog Studio
+
+A local editor for items:
+
+```bash
+npm run catalog -- studio            # http://127.0.0.1:4310/
+```
+
+- Each item has form fields for its front matter, Markdown editors for its sections, and a file tree for `files/`.
+- The lint runs while you type. Save is blocked while it reports an error, for example a released version whose files changed or a version without a changelog entry.
+- Save writes only that item's folder, through the same format library the lint and the release use. "New recipe" creates the folder its front matter names.
+- Verify runs the full check with the agent you pick, Harvest runs the command above, and Changes shows the diff for your pull request.
+
+The Studio listens on 127.0.0.1 only and sends nothing anywhere. Verify and Harvest start your own coding agent, which talks to its own model service.
 
 ## Contribute
 

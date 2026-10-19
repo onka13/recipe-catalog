@@ -10,31 +10,39 @@ export interface AgentOptions {
   name: AgentName;
   /** The agent's executable; defaults to its name on the PATH. */
   bin?: string;
+  /** The model the agent uses (for example `haiku`); the agent's own default when absent. */
+  model?: string;
   timeoutMs: number;
 }
 
 const SKILL = fileURLToPath(new URL('../../../skills/apply-recipe/SKILL.md', import.meta.url));
 
-/** Each agent's non-interactive mode, allowed to read and edit files in the working folder only. */
-function argsFor(name: AgentName, prompt: string): string[] {
-  if (name === 'claude') return ['-p', prompt, '--permission-mode', 'acceptEdits', '--allowedTools', 'Read,Edit,Write,Glob,Grep', '--output-format', 'text'];
-  if (name === 'codex') return ['exec', '--full-auto', prompt];
-  return ['-p', prompt, '--allow-tool', 'write', '--no-ask-user', '-s'];
+/**
+ * Each agent's non-interactive mode, allowed to read and edit files in the working folder, and to read the folders in
+ * `readDirs` (Codex's sandbox reads everywhere and writes only in the working folder).
+ */
+function argsFor(options: AgentOptions, prompt: string, readDirs: string[]): string[] {
+  const addDirs = readDirs.flatMap((d) => ['--add-dir', d]);
+  const model = options.model ? ['--model', options.model] : [];
+  if (options.name === 'claude') return ['-p', prompt, '--permission-mode', 'acceptEdits', '--allowedTools', 'Read,Edit,Write,Glob,Grep', ...addDirs, ...model, '--output-format', 'text'];
+  if (options.name === 'codex') return ['exec', '--full-auto', ...model, prompt];
+  return ['-p', prompt, '--allow-tool', 'write', ...addDirs, ...model, '--no-ask-user', '-s'];
 }
 
-function skillBody(): string {
-  const text = fs.readFileSync(SKILL, 'utf8');
+/** A skill's instructions without its front matter. */
+export function skillBody(file: string): string {
+  const text = fs.readFileSync(file, 'utf8');
   return text.replace(/^---\n[\s\S]*?\n---\n/, '').trim();
 }
 
 /** The prompt: the apply-recipe skill, then the recipe's instructions with its placeholders already filled in. */
 export function applyPrompt(recipe: RecipeItem, fill: (text: string) => string): string {
   const instructions = recipe.instructions.map((i) => `### ${i.target}\n${fill(i.instruction)}`).join('\n\n');
-  return `${skillBody()}\n\n<recipe id="${recipe.meta.id}" version="${recipe.meta.version}">\n${instructions}\n</recipe>\n`;
+  return `${skillBody(SKILL)}\n\n<recipe id="${recipe.meta.id}" version="${recipe.meta.version}">\n${instructions}\n</recipe>\n`;
 }
 
-export function runAgent(options: AgentOptions, cwd: string, prompt: string): { exitCode: number; output: string } {
-  const result = spawnSync(options.bin ?? options.name, argsFor(options.name, prompt), {
+export function runAgent(options: AgentOptions, cwd: string, prompt: string, readDirs: string[] = []): { exitCode: number; output: string } {
+  const result = spawnSync(options.bin ?? options.name, argsFor(options, prompt, readDirs), {
     cwd, encoding: 'utf8', timeout: options.timeoutMs, maxBuffer: 16 * 1024 * 1024,
   });
   const output = `${result.stdout ?? ''}${result.stderr ?? ''}`;

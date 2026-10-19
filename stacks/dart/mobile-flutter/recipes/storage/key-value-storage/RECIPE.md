@@ -2,7 +2,7 @@
 schemaVersion: 1
 id: key-value-storage
 name: Persistent Key-Value Storage (SharedPreferences Adapter)
-version: 1.0.0
+version: 1.0.1
 language: dart
 stack: mobile-flutter
 category: storage
@@ -37,9 +37,12 @@ Cross-platform persistent key-value caching and preference store using SharedPre
 ## Instructions
 
 ### lib/main.dart
-In lib/main.dart: In main(), add WidgetsFlutterBinding.ensureInitialized(); and SharedPreferencesStorageService().init(); before runApp().
+Add `import 'package:{{PACKAGE_NAME}}/shared/services/shared_preferences_storage_service.dart';` with the other imports. In `main()`, add `WidgetsFlutterBinding.ensureInitialized();` and `SharedPreferencesStorageService().init();` before `runApp(...)`.
 
 ## Changelog
+
+### 1.0.1
+- The instruction for `lib/main.dart` names the import of `SharedPreferencesStorageService`; without it the call did not compile.
 
 ### 1.0.0
 - First version.

@@ -35,7 +35,7 @@ class SpeechToTextAdapter implements SttServicePort {
     }
     if (_isAvailable) {
       await _speech.listen(
-        localeId: localeId ?? _defaultLocale,
+        listenOptions: stt.SpeechListenOptions(localeId: localeId ?? _defaultLocale),
         onResult: (result) {
           onResult(result.recognizedWords);
         },

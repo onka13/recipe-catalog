@@ -2,12 +2,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { assertValidBundle, buildBundle, compareWithRelease, type Bundle } from './bundle.js';
-import { AGENTS, type AgentName, type AgentOptions } from './check/agent.js';
-import { CatalogChecker, type CheckOptions, type ItemCheck } from './check/check.js';
+import { CatalogChecker } from './check/check.js';
 import { assertValidChecks, prepareRelease, type ChecksReport } from './check/release.js';
+import { checkOptions, option, print, printCheck, readJson } from './cliShared.js';
+import { addCommand, contextCommand, harvestCommand } from './harvestCli.js';
 import { hasErrors, lintCatalog } from './lint.js';
-import type { Problem } from './model.js';
 import { readCatalog } from './read.js';
+import { studioCommand } from './studio/server.js';
 
 const USAGE = `Usage: catalog <command> [options]
 
@@ -20,27 +21,19 @@ const USAGE = `Usage: catalog <command> [options]
   release --version <x.y.z> --image <image> --agent <name> [--agent-bin <path>]
                                             Lint, check every new or changed item, then write
                                             release/catalog.json and release/checks.json
+  harvest <project> "<capability>" --stack <id> --agent claude|codex|copilot [--agent-bin <path>]
+          [--category <id>] [--files a,b] [--budget <tokens>] [--fix-rounds <n>] [--image <image> [--verify]]
+                                            Your coding agent turns a capability of your project into a
+                                            recipe; it is checked and filed under stacks/ (CAT-23)
+  context <project> "<capability>" [--files a,b] [--budget <tokens>]
+                                            Print the project map and the files around the capability
+  add <item folder> [--project <dir>] [--stack <id>]
+                                            Check a recipe written outside stacks/ and file it in its folder
+  studio [--port <n>]                       Edit items in a local web page (CAT-28)
 
-Common options: --root <dir> (default .), --timeout <minutes per command> (default 15)
+Common options: --root <dir> (default .), --timeout <minutes per command> (default 15),
+                --agent-model <model> (the agent's model, for example haiku; its own default otherwise)
 `;
-
-function option(args: string[], name: string): string | undefined {
-  const at = args.indexOf(`--${name}`);
-  return at >= 0 ? args[at + 1] : undefined;
-}
-
-function print(problems: Problem[]): void {
-  for (const p of problems) console.log(`${p.severity === 'error' ? 'error  ' : 'warning'} ${p.path}: ${p.message}`);
-  const errors = problems.filter((p) => p.severity === 'error').length;
-  console.log(`${errors} error(s), ${problems.length - errors} warning(s)`);
-}
-
-function readJson<T>(file: string, assert: (v: unknown) => asserts v is T): T | undefined {
-  if (!fs.existsSync(file)) return undefined;
-  const value: unknown = JSON.parse(fs.readFileSync(file, 'utf8'));
-  assert(value);
-  return value;
-}
 
 function lintAll(root: string, against?: string) {
   const read = readCatalog(root);
@@ -49,25 +42,6 @@ function lintAll(root: string, against?: string) {
   if (against && !previous) problems.push({ path: against, message: 'The release bundle to compare against does not exist.', severity: 'error' });
   if (previous && !hasErrors(problems)) problems.push(...compareWithRelease(buildBundle(read.catalog, '0.0.0'), previous));
   return { problems, catalog: read.catalog };
-}
-
-function checkOptions(args: string[], root: string, required: boolean): CheckOptions | string {
-  const image = option(args, 'image');
-  if (!image) return 'The check needs --image <toolchain image>.';
-  const name = option(args, 'agent');
-  if (name && !AGENTS.includes(name as AgentName)) return `--agent must be one of ${AGENTS.join(', ')}.`;
-  if (!name && required) return 'A release needs --agent, because items carry instructions for a coding agent.';
-  const timeoutMs = Number(option(args, 'timeout') ?? 15) * 60_000;
-  const agent: AgentOptions | undefined = name ? { name: name as AgentName, bin: option(args, 'agent-bin'), timeoutMs } : undefined;
-  return { image, agent, timeoutMs, workDir: path.join(root, '.check') };
-}
-
-function printCheck(check: ItemCheck): void {
-  for (const s of check.steps) {
-    console.log(`${s.status.padEnd(7)} ${s.step}${s.command ? `: ${s.command}` : ''}`);
-    if (s.output && s.status !== 'passed') console.log(s.output.split('\n').map((l) => `          ${l}`).join('\n'));
-  }
-  console.log(`${check.kind} ${check.id}@${check.version}: ${check.status}`);
 }
 
 function verify(args: string[], root: string): number {
@@ -111,7 +85,7 @@ function release(args: string[], root: string): number {
   return 0;
 }
 
-function run(args: string[]): number {
+async function run(args: string[]): Promise<number> {
   const [command] = args;
   const root = path.resolve(option(args, 'root') ?? '.');
   if (command === 'lint') {
@@ -133,8 +107,15 @@ function run(args: string[]): number {
   }
   if (command === 'verify') return verify(args, root);
   if (command === 'release') return release(args, root);
+  if (command === 'context') return contextCommand(args, root);
+  if (command === 'add') return addCommand(args, root);
+  if (command === 'harvest') return harvestCommand(args, root);
+  if (command === 'studio') return studioCommand(args, root);
   console.log(USAGE);
   return command ? 2 : 0;
 }
 
-process.exitCode = run(process.argv.slice(2));
+run(process.argv.slice(2)).then((code) => { process.exitCode = code; }, (error: unknown) => {
+  console.error(error instanceof Error ? error.message : error);
+  process.exitCode = 1;
+});

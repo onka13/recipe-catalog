@@ -2,7 +2,7 @@
 schemaVersion: 1
 id: speech-to-text
 name: Speech to Text Transcription Service
-version: 1.0.0
+version: 1.0.1
 language: dart
 stack: mobile-flutter
 category: media
@@ -49,6 +49,9 @@ Add <uses-permission android:name="android.permission.RECORD_AUDIO"/> and <uses-
 Add NSSpeechRecognitionUsageDescription and NSMicrophoneUsageDescription keys with descriptive strings to Info.plist.
 
 ## Changelog
+
+### 1.0.1
+- The locale goes through `SpeechListenOptions`; the `localeId` argument of `listen` is deprecated and failed `flutter analyze`.
 
 ### 1.0.0
 - First version.

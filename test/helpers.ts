@@ -24,3 +24,29 @@ export function edit(root: string, relPath: string, change: (text: string) => st
 export function remove(root: string): void {
   fs.rmSync(root, { recursive: true, force: true });
 }
+
+/** A throwaway copy of every stack with CATEGORIES.md and FORMAT.md. */
+export function catalogFixture(): string {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'catalog-test-'));
+  for (const file of ['CATEGORIES.md', 'FORMAT.md']) fs.copyFileSync(path.join(REPO, file), path.join(root, file));
+  fs.cpSync(path.join(REPO, 'stacks'), path.join(root, 'stacks'), { recursive: true });
+  return root;
+}
+
+/** Every file under `dir` with its content, to prove which files an action changed. */
+export function snapshot(dir: string): Map<string, string> {
+  const out = new Map<string, string>();
+  const walk = (d: string) => {
+    for (const e of fs.readdirSync(d, { withFileTypes: true })) {
+      const full = path.join(d, e.name);
+      if (e.isDirectory()) { if (e.name !== '.git') walk(full); } else out.set(path.relative(dir, full), fs.readFileSync(full, 'utf8'));
+    }
+  };
+  walk(dir);
+  return out;
+}
+
+export function changedFiles(before: Map<string, string>, after: Map<string, string>): string[] {
+  const keys = new Set([...before.keys(), ...after.keys()]);
+  return [...keys].filter((k) => before.get(k) !== after.get(k)).sort();
+}

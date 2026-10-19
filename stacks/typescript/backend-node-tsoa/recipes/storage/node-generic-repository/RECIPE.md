@@ -2,7 +2,7 @@
 schemaVersion: 1
 id: node-generic-repository
 name: Node.js Generic Repository (BaseMongo & TenantMongo Architecture)
-version: 1.0.1
+version: 1.0.2
 language: typescript
 stack: backend-node-tsoa
 category: storage
@@ -29,6 +29,9 @@ packages:
   - name: zod
     version: ^3.22.4
     dev: false
+  - name: mongoose
+    version: ^9.7.4
+    dev: false
 verify:
   - npm run lint
 ---
@@ -42,6 +45,10 @@ Layered generic repository pattern isolating MongoDB persistence behind clean da
 Extend BaseMongoRepository for global/reference collections (e.g. Country, Currency, SystemConfig with softDelete: false) or TenantMongoRepository for tenant-scoped business entities. Implement domain-specific methods by composing findBy, findByPartial, or incrementBy without leaking Mongoose Document types into domain use cases.
 
 ## Changelog
+
+### 1.0.2
+- Declares `mongoose`, which the repository imports; without it the project did not compile.
+- The collection is typed as the MongoDB driver's collection with string `_id`s, which it is; the mongoose `Collection` type did not compile.
 
 ### 1.0.1
 - Rules for code written later (file patterns) moved from Instructions to Conventions; they are no longer applied at install.

@@ -1,4 +1,4 @@
-import mongoose, { Collection, Document } from 'mongoose';
+import mongoose from 'mongoose';
 import { z } from 'zod';
 import { IEntityBase, EntityStatus } from './EntityBase';
 import { FindByModel, FilterQuery, PaginationOptions, LookupOptions, WhereFilterOperator } from './QueryModels';
@@ -10,6 +10,9 @@ export interface RepositoryOptions<T> {
   softDeleteField?: string;
   validator?: z.ZodSchema<T>;
 }
+
+/** A stored document: entities keep their string id in `_id`. */
+type MongoDoc = mongoose.mongo.Document & { _id: string };
 
 export class BaseMongoRepository<T extends IEntityBase> implements IGenericRepository<T> {
   protected readonly collectionName: string;
@@ -24,11 +27,11 @@ export class BaseMongoRepository<T extends IEntityBase> implements IGenericRepos
     };
   }
 
-  protected async getCollection(): Promise<Collection<Document>> {
+  protected async getCollection(): Promise<mongoose.mongo.Collection<MongoDoc>> {
     if (!mongoose.connection.db) {
       throw new DatabaseError(`MongoDB connection is not established. Cannot access collection '${this.collectionName}'`);
     }
-    return mongoose.connection.db.collection(this.collectionName);
+    return mongoose.connection.db.collection<MongoDoc>(this.collectionName);
   }
 
   protected toMongoDoc(data: any): any {

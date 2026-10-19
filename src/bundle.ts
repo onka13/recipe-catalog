@@ -87,20 +87,34 @@ function compareSemver(a: string, b: string): number {
   return x.pre < y.pre ? -1 : 1;
 }
 
+type Compared = Pick<BundleItem, 'path' | 'meta' | 'contentHash'>;
+
+/** One item against its released form: a released `id@version` never changes, and versions never go backwards. */
+function compareReleased(current: Compared, old: BundleItem, release: string): Problem[] {
+  const id = String(old.meta.id);
+  const order = compareSemver(String(current.meta.version), String(old.meta.version));
+  if (order < 0) return [{ path: current.path, message: `version ${current.meta.version} is older than the released ${old.meta.version}.`, severity: 'error' }];
+  if (order === 0 && current.contentHash !== old.contentHash) {
+    return [{ path: current.path, message: `${id}@${old.meta.version} was released in ${release} and has changed; publish the change as a new version.`, severity: 'error' }];
+  }
+  return [];
+}
+
+/** Format section 7.2 for one item (Catalog Studio checks the item being edited against the last release). */
+export function compareItemWithRelease(item: ScaffoldItem | RecipeItem, previous: Bundle): Problem[] {
+  const old = previous[item.kind === 'recipe' ? 'recipes' : 'scaffolds'].find((i) => i.meta.id === item.meta.id);
+  return old ? compareReleased(bundleItem(item), old, previous.catalogVersion) : [];
+}
+
 /** Format section 7.2: a published `id@version` never changes, and versions never go backwards. */
 export function compareWithRelease(next: Bundle, previous: Bundle): Problem[] {
   const problems: Problem[] = [];
   for (const kind of ['scaffolds', 'recipes'] as const) {
     const now = new Map(next[kind].map((i) => [String(i.meta.id), i]));
     for (const old of previous[kind]) {
-      const id = String(old.meta.id);
-      const current = now.get(id);
-      if (!current) { problems.push({ path: old.path, message: `${id} was in ${previous.catalogVersion} and is gone.`, severity: 'warning' }); continue; }
-      const order = compareSemver(String(current.meta.version), String(old.meta.version));
-      if (order < 0) problems.push({ path: current.path, message: `version ${current.meta.version} is older than the released ${old.meta.version}.`, severity: 'error' });
-      if (order === 0 && current.contentHash !== old.contentHash) {
-        problems.push({ path: current.path, message: `${id}@${old.meta.version} was released in ${previous.catalogVersion} and has changed; publish the change as a new version.`, severity: 'error' });
-      }
+      const current = now.get(String(old.meta.id));
+      if (!current) problems.push({ path: old.path, message: `${String(old.meta.id)} was in ${previous.catalogVersion} and is gone.`, severity: 'warning' });
+      else problems.push(...compareReleased(current, old, previous.catalogVersion));
     }
   }
   return problems;

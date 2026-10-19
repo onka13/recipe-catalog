@@ -2,7 +2,7 @@
 schemaVersion: 1
 id: app-theming
 name: Material 3 Adaptive Theme System
-version: 1.0.0
+version: 1.0.1
 language: dart
 stack: mobile-flutter
 category: ui
@@ -36,6 +36,9 @@ Material 3 dynamic color scheme, adaptive light/dark mode scaffolding, and typog
 In lib/main.dart: 1. Import package:{{PACKAGE_NAME}}/core/theme/app_theme.dart. 2. In MaterialApp, set theme: AppTheme.lightTheme, darkTheme: AppTheme.darkTheme, themeMode: ThemeMode.system. Preserve existing home widget.
 
 ## Changelog
+
+### 1.0.1
+- Uses `CardThemeData`, which `ThemeData.cardTheme` takes since Flutter 3.27; `CardTheme` failed `flutter analyze`.
 
 ### 1.0.0
 - First version.

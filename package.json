@@ -5,17 +5,30 @@
   "description": "Scaffolds and recipes for every language and project type, as Markdown files, with the tools to lint, check, build and edit them.",
   "license": "Apache-2.0",
   "type": "module",
-  "bin": { "catalog": "dist/src/cli.js" },
-  "exports": { ".": "./dist/src/index.js" },
-  "files": ["dist/src", "schema"],
-  "engines": { "node": ">=20" },
+  "bin": {
+    "catalog": "dist/src/cli.js"
+  },
+  "exports": {
+    ".": "./dist/src/index.js"
+  },
+  "files": [
+    "dist/src",
+    "dist/studio",
+    "studio",
+    "schema",
+    "skills"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig.web.json",
     "test": "npm run build && node --test \"dist/test/*.test.js\"",
     "catalog": "node dist/src/cli.js"
   },
   "dependencies": {
     "ajv": "8.17.1",
+    "code-intelligence": "file:vendor/code-intelligence-0.1.0.tgz",
     "yaml": "2.6.1"
   },
   "devDependencies": {

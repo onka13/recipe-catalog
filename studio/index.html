@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Catalog Studio</title>
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/web/main.js"></script>
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><strong>Catalog Studio</strong> <code id="root"></code></div>
+    <nav>
+      <button type="button" id="new-recipe" class="primary">New recipe</button>
+      <button type="button" id="harvest">Harvest</button>
+      <button type="button" id="changes">Changes</button>
+    </nav>
+  </header>
+  <div class="layout">
+    <aside>
+      <input id="filter" type="search" placeholder="Filter items" aria-label="Filter items">
+      <div id="items"></div>
+    </aside>
+    <main id="main"></main>
+  </div>
+</body>
+</html>

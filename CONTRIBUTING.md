@@ -7,6 +7,8 @@ Thank you for adding to the catalog. A missing stack, a recipe for a capability 
 - Read `FORMAT.md`. Every item is one folder with one Markdown file and its `files/`.
 - Look for an item close to yours and copy its folder. Change the id, the name and the version (`1.0.0` for a new item).
 - File a recipe under one of the categories in `CATEGORIES.md`. If none fits, add one with its meaning in the same pull request.
+- Prefer an editor? `npm run catalog -- studio` opens Catalog Studio, which lints while you edit and writes only the item you save.
+- Built the capability in your own project? `npm run catalog -- harvest <project> "<capability>" --stack <id> --agent <claude|codex|copilot>` lets your coding agent write the recipe (see `README.md`).
 
 ## Check your item
 

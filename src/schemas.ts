@@ -43,3 +43,20 @@ export function describeErrors(errors: ErrorObject[] | null | undefined): string
     return `${where}: ${e.message ?? e.keyword}${extra}`;
   });
 }
+
+const DEFS_REF = /^defs\.schema\.json#\/\$defs\/(.+)$/;
+
+/** The schema with every `defs.schema.json` reference replaced by its definition (Catalog Studio builds its forms from it). */
+export function inlinedSchema(name: 'stack' | 'scaffold' | 'recipe'): Record<string, unknown> {
+  load();
+  const defs = (raw.get('defs')?.$defs ?? {}) as Record<string, Record<string, unknown>>;
+  const inline = (value: unknown): unknown => {
+    if (Array.isArray(value)) return value.map(inline);
+    if (!value || typeof value !== 'object') return value;
+    const { $ref, ...rest } = value as Record<string, unknown>;
+    const def = typeof $ref === 'string' ? DEFS_REF.exec($ref)?.[1] : undefined;
+    const merged = def ? { ...defs[def], ...rest } : rest;
+    return Object.fromEntries(Object.entries(merged).map(([k, v]) => [k, inline(v)]));
+  };
+  return inline(raw.get(name)) as Record<string, unknown>;
+}
