@@ -13,7 +13,7 @@ const TAIL = 4000;
 export const tail = (text: string) => (text.length > TAIL ? `...${text.slice(-TAIL)}` : text);
 
 /**
- * One long-lived container of the toolchain image with the check folder mounted at `/work`, so caches (pub, npm) persist
+ * One long-lived container of the toolchain image with the check folder mounted at `/work`, so caches (pub, npm, NuGet) persist
  * between the commands of one check. Package caches are shared between checks through named volumes.
  */
 export class Sandbox {
@@ -25,6 +25,7 @@ export class Sandbox {
   start(): void {
     const args = ['run', '-d', '--rm', '--name', this.name, '-v', `${this.hostDir}:/work`,
       '-v', 'catalog-check-pub-cache:/root/.pub-cache', '-v', 'catalog-check-npm-cache:/root/.npm',
+      '-v', 'catalog-check-nuget-cache:/root/.nuget/packages',
       '--entrypoint', 'sleep', this.image, 'infinity'];
     const result = spawnSync('docker', args, { encoding: 'utf8' });
     if (result.status !== 0) throw new Error(`Could not start the toolchain image ${this.image}: ${result.stderr || result.error?.message}`);

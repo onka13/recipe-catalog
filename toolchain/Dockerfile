@@ -23,4 +23,15 @@ RUN git clone --depth 1 -b "${FLUTTER_VERSION}" https://github.com/flutter/flutt
     && flutter precache --universal \
     && flutter --version
 
+# The .NET SDK at a fixed version, for the C# stack.
+ARG DOTNET_SDK_VERSION=10.0.401
+ENV DOTNET_ROOT=/usr/share/dotnet
+ENV PATH="${DOTNET_ROOT}:${PATH}"
+ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 DOTNET_NOLOGO=1 DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+RUN apt-get update && apt-get install -y --no-install-recommends libicu70 && rm -rf /var/lib/apt/lists/* \
+    && curl -fsSL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh \
+    && bash /tmp/dotnet-install.sh --version "${DOTNET_SDK_VERSION}" --install-dir "${DOTNET_ROOT}" \
+    && rm /tmp/dotnet-install.sh \
+    && dotnet --version
+
 WORKDIR /work

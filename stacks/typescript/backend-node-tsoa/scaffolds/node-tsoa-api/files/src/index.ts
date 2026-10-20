@@ -1,7 +1,7 @@
-import express from 'express';
+import { createServer } from './server';
 
-export const app = express();
+const port = Number(process.env.PORT ?? 3000);
 
-app.get('/health', (_req, res) => {
-  res.json({ status: 'ok' });
+createServer().listen(port, () => {
+  console.log(`Listening on port ${port}`);
 });

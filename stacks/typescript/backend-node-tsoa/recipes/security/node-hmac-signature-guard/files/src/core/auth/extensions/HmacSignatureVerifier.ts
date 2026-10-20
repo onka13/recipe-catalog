@@ -14,10 +14,6 @@ export class HmacSignatureVerifier {
    * Verifies incoming request HMAC-SHA256 signature and timestamp freshness window.
    */
   public static verify(request: Request, options: HmacVerificationOptions = {}): void {
-    if (process.env.HMAC_VERIFICATION_DISABLED === 'true') {
-      return;
-    }
-
     const signature = (request.headers['x-signature'] as string) || (request.headers['X-Signature'] as string);
     const timestamp = (request.headers['x-timestamp'] as string) || (request.headers['X-Timestamp'] as string);
 
@@ -35,7 +31,10 @@ export class HmacSignatureVerifier {
     }
 
     // 2. Compute expected HMAC hash: METHOD + PATH + TIMESTAMP + BODY
-    const secret = options.secretKey || process.env.HMAC_SECRET_KEY || '{{HMAC_SECRET_KEY}}';
+    const secret = options.secretKey || process.env.HMAC_SECRET_KEY;
+    if (!secret) {
+      throw new Error('HMAC_SECRET_KEY is not set: the HMAC signature guard needs the shared signing secret.');
+    }
     const method = (request.method || 'GET').toUpperCase();
     const path = request.originalUrl || request.url || '/';
     const bodyString = request.body ? (typeof request.body === 'string' ? request.body : JSON.stringify(request.body)) : '';

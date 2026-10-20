@@ -1,0 +1,1463 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "0.1.0",
+  "items": [
+    {
+      "kind": "scaffold",
+      "id": "aspnetcore-api",
+      "version": "1.0.0",
+      "contentHash": "sha256:2c3291c2139d2d7927e196c692013bf4d37b0e87a03c6ebd074b1c8ca816aaea",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:39:59.098Z",
+      "image": "recipe-catalog-toolchain",
+      "steps": [
+        {
+          "step": "aspnetcore-api: commands",
+          "command": "dotnet --version",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "aspnetcore-api: files",
+          "status": "passed"
+        },
+        {
+          "step": "aspnetcore-api: verify",
+          "command": "dotnet build --nologo",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "aspnetcore-api: verify",
+          "command": "dotnet test --nologo",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "dotnet-delivery-scripts: files",
+          "status": "passed"
+        },
+        {
+          "step": "dotnet-delivery-scripts: verify",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/test.sh",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "scaffold",
+      "id": "flutter-app",
+      "version": "1.0.0",
+      "contentHash": "sha256:a987dbcf5ec6028cbaa546d19c058349b9d3144b4b2eddb58926e2793a0696dd",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:40:34.088Z",
+      "image": "recipe-catalog-toolchain",
+      "agent": "claude",
+      "steps": [
+        {
+          "step": "flutter-app: commands",
+          "command": "flutter create --project-name catalog_check --org com.catalog_check --platforms android,ios,web .",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "flutter-app: verify",
+          "command": "flutter analyze",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "flutter-delivery-scripts: files",
+          "status": "passed"
+        },
+        {
+          "step": "flutter-delivery-scripts: verify",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "core-foundation: files",
+          "status": "passed"
+        },
+        {
+          "step": "core-foundation: verify",
+          "command": "flutter analyze",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "app-theming: files",
+          "status": "passed"
+        },
+        {
+          "step": "app-theming: instructions",
+          "command": "claude",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "app-theming: verify",
+          "command": "flutter analyze",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/test.sh",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "scaffold",
+      "id": "node-tsoa-api",
+      "version": "2.0.0",
+      "contentHash": "sha256:6c4103523bebd2c755f0c4a1b71f3ab43427ca6adbcd417d2de0e2f3fb1f9d90",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:41:05.495Z",
+      "image": "recipe-catalog-toolchain",
+      "agent": "claude",
+      "steps": [
+        {
+          "step": "node-tsoa-api: commands",
+          "command": "npm init -y > /dev/null",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-tsoa-api: commands",
+          "command": "npm pkg set name=catalog_check private=true main=dist/index.js scripts.generate=\"tsoa spec-and-routes\" scripts.build=\"npm run generate && tsc -p tsconfig.json\" scripts.lint=\"npm run generate && tsc -p tsconfig.json --noEmit\" scripts.test='npm run generate && node --import tsx --test $(find src -name \"*.test.ts\")' scripts.start=\"node dist/index.js\"",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-tsoa-api: commands",
+          "command": "npm install --include=dev --no-audit --no-fund express@4.21.2 tsoa@6.6.0",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-tsoa-api: commands",
+          "command": "npm install --include=dev --no-audit --no-fund --save-dev typescript@5.6.3 @types/node@20.17.10 @types/express@4.17.21 tsx@4.23.15",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-tsoa-api: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-tsoa-api: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-tsoa-api: verify",
+          "command": "npm run build",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-tsoa-api: verify",
+          "command": "npm run test",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-delivery-scripts: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-delivery-scripts: verify",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-core-foundation: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-core-foundation: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-observability-and-env: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-observability-and-env: instructions",
+          "command": "claude",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-observability-and-env: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-feature-flags: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-feature-flags: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-boundary-validation: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-boundary-validation: packages",
+          "command": "npm install --include=dev zod@^3.22.4",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-boundary-validation: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/test.sh",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "scaffold",
+      "id": "react-web",
+      "version": "1.0.1",
+      "contentHash": "sha256:3dd87aadc68ff80de1149e573cd17e6238d8617e79e8cc2427b2f3ffdb27a3e2",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:41:25.489Z",
+      "image": "recipe-catalog-toolchain",
+      "steps": [
+        {
+          "step": "react-web: commands",
+          "command": "npx -y create-vite@5.5.5 vite-scaffold --template react-ts",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "react-web: commands",
+          "command": "cp -a vite-scaffold/. . && rm -rf vite-scaffold",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "react-web: commands",
+          "command": "npm pkg set name=catalog_check scripts.test=\"node --test\"",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "react-web: commands",
+          "command": "npm install --include=dev --no-audit --no-fund",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "react-web: verify",
+          "command": "npm run build",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "react-delivery-scripts: files",
+          "status": "passed"
+        },
+        {
+          "step": "react-delivery-scripts: verify",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/test.sh",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "aspnetcore-core-foundation",
+      "version": "1.0.0",
+      "contentHash": "sha256:f7a9461a7b9f81503e244ad3c6bfe8e0f1267c34f99efecb3e252b056e22176a",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:41:38.385Z",
+      "image": "recipe-catalog-toolchain",
+      "agent": "claude",
+      "steps": [
+        {
+          "step": "baseline: aspnetcore-api and its mandatory recipes",
+          "status": "passed"
+        },
+        {
+          "step": "aspnetcore-core-foundation: files",
+          "status": "passed"
+        },
+        {
+          "step": "aspnetcore-core-foundation: instructions",
+          "command": "claude",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "aspnetcore-core-foundation: verify",
+          "command": "dotnet build --nologo",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/test.sh",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "dotnet-delivery-scripts",
+      "version": "1.0.0",
+      "contentHash": "sha256:2adbdec12c61b806bccbd7eac847d505c6fd13549adfe30e4301cefb47bf95f0",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:41:38.386Z",
+      "image": "recipe-catalog-toolchain",
+      "steps": [
+        {
+          "step": "baseline: aspnetcore-api and its mandatory recipes",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "core-foundation",
+      "version": "1.0.1",
+      "contentHash": "sha256:7dbfc4c0dc22a6407c99afe0ebed896f0231da18be137618808e3a5420adb84a",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:41:38.386Z",
+      "image": "recipe-catalog-toolchain",
+      "steps": [
+        {
+          "step": "baseline: flutter-app and its mandatory recipes",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "flutter-delivery-scripts",
+      "version": "1.0.0",
+      "contentHash": "sha256:7692f78cd1886298db411cb6c3d3dfca9fab772ba795957d95f163823cd95a0f",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:41:38.386Z",
+      "image": "recipe-catalog-toolchain",
+      "steps": [
+        {
+          "step": "baseline: flutter-app and its mandatory recipes",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "speech-to-text",
+      "version": "1.0.1",
+      "contentHash": "sha256:8300ee875c9a0ed6282af6e88a35b268d701c3fd911a3f73b61c990692160e86",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:41:57.542Z",
+      "image": "recipe-catalog-toolchain",
+      "agent": "claude",
+      "steps": [
+        {
+          "step": "baseline: flutter-app and its mandatory recipes",
+          "status": "passed"
+        },
+        {
+          "step": "speech-to-text: files",
+          "status": "passed"
+        },
+        {
+          "step": "speech-to-text: packages",
+          "command": "flutter pub add speech_to_text:^7.0.0",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "speech-to-text: instructions",
+          "command": "claude",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "speech-to-text: verify",
+          "command": "flutter analyze",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/test.sh",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "text-to-speech",
+      "version": "1.0.0",
+      "contentHash": "sha256:682b59fd6f014dc17fc5dc0dbfe3807038a49cdaec6cfea504cf391de7c60018",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:42:07.278Z",
+      "image": "recipe-catalog-toolchain",
+      "steps": [
+        {
+          "step": "baseline: flutter-app and its mandatory recipes",
+          "status": "passed"
+        },
+        {
+          "step": "text-to-speech: files",
+          "status": "passed"
+        },
+        {
+          "step": "text-to-speech: packages",
+          "command": "flutter pub add flutter_tts:^4.2.0",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "text-to-speech: verify",
+          "command": "flutter analyze",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/test.sh",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "admob-monetization",
+      "version": "1.0.0",
+      "contentHash": "sha256:1d86b493936bf9860b6ab922a2d75307719a0c7f723a7a6036021f5c230ee60b",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:42:36.095Z",
+      "image": "recipe-catalog-toolchain",
+      "agent": "claude",
+      "steps": [
+        {
+          "step": "baseline: flutter-app and its mandatory recipes",
+          "status": "passed"
+        },
+        {
+          "step": "admob-monetization: files",
+          "status": "passed"
+        },
+        {
+          "step": "admob-monetization: packages",
+          "command": "flutter pub add google_mobile_ads:^5.1.0",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "admob-monetization: instructions",
+          "command": "claude",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "admob-monetization: verify",
+          "command": "flutter analyze",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/test.sh",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "rest-network-client",
+      "version": "1.0.0",
+      "contentHash": "sha256:69c9e4085e3a33b876c948e7eb3431193dd24809fae48b3ec4ec45902276423e",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:42:46.094Z",
+      "image": "recipe-catalog-toolchain",
+      "steps": [
+        {
+          "step": "baseline: flutter-app and its mandatory recipes",
+          "status": "passed"
+        },
+        {
+          "step": "rest-network-client: files",
+          "status": "passed"
+        },
+        {
+          "step": "rest-network-client: packages",
+          "command": "flutter pub add dio:^5.7.0",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "rest-network-client: verify",
+          "command": "flutter analyze",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/test.sh",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "key-value-storage",
+      "version": "1.0.1",
+      "contentHash": "sha256:0e7e241d08d1c95eb30d0bbe3fe16cfc4eec54864ea86c0f4fa862f51dfaa85a",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:43:04.046Z",
+      "image": "recipe-catalog-toolchain",
+      "agent": "claude",
+      "steps": [
+        {
+          "step": "baseline: flutter-app and its mandatory recipes",
+          "status": "passed"
+        },
+        {
+          "step": "key-value-storage: files",
+          "status": "passed"
+        },
+        {
+          "step": "key-value-storage: packages",
+          "command": "flutter pub add shared_preferences:^2.3.2",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "key-value-storage: instructions",
+          "command": "claude",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "key-value-storage: verify",
+          "command": "flutter analyze",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/test.sh",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "app-theming",
+      "version": "1.0.1",
+      "contentHash": "sha256:ae7163ed240151ae3c7a4076882ea968584aa920d7e7c9258f1fd315c8ea96a7",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:43:04.046Z",
+      "image": "recipe-catalog-toolchain",
+      "steps": [
+        {
+          "step": "baseline: flutter-app and its mandatory recipes",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "node-atlas-vector-search",
+      "version": "1.0.1",
+      "contentHash": "sha256:403d7b0384f113aaecccbf4bd9c99e981a6cb7324b69cfe2707704a039a788d7",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:43:14.576Z",
+      "image": "recipe-catalog-toolchain",
+      "steps": [
+        {
+          "step": "baseline: node-tsoa-api and its mandatory recipes",
+          "status": "passed"
+        },
+        {
+          "step": "node-generic-repository: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-generic-repository: packages",
+          "command": "npm install --include=dev zod@^3.22.4",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-generic-repository: packages",
+          "command": "npm install --include=dev mongoose@^9.7.4",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-generic-repository: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-atlas-vector-search: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-atlas-vector-search: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/test.sh",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "node-base-controller",
+      "version": "1.0.1",
+      "contentHash": "sha256:21f2711f9e09e411329a82bf9bab1875693945b834b58cbe69679bf498a37d4f",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:43:20.607Z",
+      "image": "recipe-catalog-toolchain",
+      "steps": [
+        {
+          "step": "baseline: node-tsoa-api and its mandatory recipes",
+          "status": "passed"
+        },
+        {
+          "step": "node-base-controller: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-base-controller: packages",
+          "command": "npm install --include=dev tsoa@^6.2.1",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-base-controller: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/test.sh",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "node-boundary-validation",
+      "version": "1.0.0",
+      "contentHash": "sha256:140df1d89e33b6e2bb751bd39c0699cdba87ead830227c7903585fe992c35cb0",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:43:20.607Z",
+      "image": "recipe-catalog-toolchain",
+      "steps": [
+        {
+          "step": "baseline: node-tsoa-api and its mandatory recipes",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "node-state-version-piggyback",
+      "version": "1.0.1",
+      "contentHash": "sha256:8a3c43344f7f75c56e1bea224ad0fc6364ed1ff7ace25279980a65528d4e696e",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:43:39.821Z",
+      "image": "recipe-catalog-toolchain",
+      "agent": "claude",
+      "steps": [
+        {
+          "step": "baseline: node-tsoa-api and its mandatory recipes",
+          "status": "passed"
+        },
+        {
+          "step": "node-base-controller: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-base-controller: packages",
+          "command": "npm install --include=dev tsoa@^6.2.1",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-base-controller: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-async-request-context: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-async-request-context: instructions",
+          "command": "claude",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-async-request-context: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-state-version-piggyback: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-state-version-piggyback: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/test.sh",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "node-anti-corruption-layer",
+      "version": "1.0.1",
+      "contentHash": "sha256:1d427bd94cd3168fc5143b176bc6cdde152647282adb6510d42f580f9e8f538e",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:43:45.073Z",
+      "image": "recipe-catalog-toolchain",
+      "steps": [
+        {
+          "step": "baseline: node-tsoa-api and its mandatory recipes",
+          "status": "passed"
+        },
+        {
+          "step": "node-anti-corruption-layer: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-anti-corruption-layer: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/test.sh",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "node-ioc-container",
+      "version": "1.1.0",
+      "contentHash": "sha256:33e2406eefa0eef5637fffd673afac0cd7a42d2cac4a394f0d88b4b03ea74c4d",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:44:03.923Z",
+      "image": "recipe-catalog-toolchain",
+      "agent": "claude",
+      "steps": [
+        {
+          "step": "baseline: node-tsoa-api and its mandatory recipes",
+          "status": "passed"
+        },
+        {
+          "step": "node-ioc-container: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-ioc-container: instructions",
+          "command": "claude",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-ioc-container: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/test.sh",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "node-strangler-router-facade",
+      "version": "1.1.0",
+      "contentHash": "sha256:0932f6fe44d69ef40a0373c52389344fab593c02afe27cfde24d8ed7cdd31cb3",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:44:09.246Z",
+      "image": "recipe-catalog-toolchain",
+      "steps": [
+        {
+          "step": "baseline: node-tsoa-api and its mandatory recipes",
+          "status": "passed"
+        },
+        {
+          "step": "node-strangler-router-facade: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-strangler-router-facade: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/test.sh",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "node-async-request-context",
+      "version": "1.0.0",
+      "contentHash": "sha256:ab1de7a36bd0de4d21a2a4d9a4a9623ddc0b13019437f0a00ee5c71a83dd86e6",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:44:23.618Z",
+      "image": "recipe-catalog-toolchain",
+      "agent": "claude",
+      "steps": [
+        {
+          "step": "baseline: node-tsoa-api and its mandatory recipes",
+          "status": "passed"
+        },
+        {
+          "step": "node-async-request-context: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-async-request-context: instructions",
+          "command": "claude",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-async-request-context: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/test.sh",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "node-core-foundation",
+      "version": "1.0.0",
+      "contentHash": "sha256:1a5338b1e1bf53d40154a21628046e2e0eaf075018a42169c2702dc518fdd869",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:44:23.618Z",
+      "image": "recipe-catalog-toolchain",
+      "steps": [
+        {
+          "step": "baseline: node-tsoa-api and its mandatory recipes",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "node-feature-flags",
+      "version": "1.0.0",
+      "contentHash": "sha256:edb9ad6a271761160d60a5ffe9efcbfebed08fbeeae12b0b54590064277f6407",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:44:23.618Z",
+      "image": "recipe-catalog-toolchain",
+      "steps": [
+        {
+          "step": "baseline: node-tsoa-api and its mandatory recipes",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "node-delivery-scripts",
+      "version": "1.0.0",
+      "contentHash": "sha256:6b1a73c646dfb6531fe6049e3088b330c81828e26e42b6fd997bb8df30dcefa8",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:44:23.618Z",
+      "image": "recipe-catalog-toolchain",
+      "steps": [
+        {
+          "step": "baseline: node-tsoa-api and its mandatory recipes",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "node-observability-and-env",
+      "version": "1.0.1",
+      "contentHash": "sha256:1dda38f7e0260a1f135c224a8d03f309ac217f8a92d7164260d494ac0f68d5f5",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:44:23.618Z",
+      "image": "recipe-catalog-toolchain",
+      "steps": [
+        {
+          "step": "baseline: node-tsoa-api and its mandatory recipes",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "node-firebase-appcheck",
+      "version": "1.0.0",
+      "contentHash": "sha256:50af5fe4b725535eeb60b13f38d57a682dcff4c3b47f64b030c3c648c88dc485",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:45:01.928Z",
+      "image": "recipe-catalog-toolchain",
+      "agent": "claude",
+      "steps": [
+        {
+          "step": "baseline: node-tsoa-api and its mandatory recipes",
+          "status": "passed"
+        },
+        {
+          "step": "node-base-controller: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-base-controller: packages",
+          "command": "npm install --include=dev tsoa@^6.2.1",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-base-controller: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-tsoa-security-gateway: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-tsoa-security-gateway: packages",
+          "command": "npm install --include=dev firebase-admin@^12.0.0",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-tsoa-security-gateway: instructions",
+          "command": "claude",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-tsoa-security-gateway: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-firebase-appcheck: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-firebase-appcheck: packages",
+          "command": "npm install --include=dev firebase-admin@^12.0.0",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-firebase-appcheck: instructions",
+          "command": "claude",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-firebase-appcheck: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/test.sh",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "node-hmac-signature-guard",
+      "version": "1.1.0",
+      "contentHash": "sha256:749e7592951d960fd8c1badb991ad4a64d218a09235942231c4863984fc0daf2",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:45:36.487Z",
+      "image": "recipe-catalog-toolchain",
+      "agent": "claude",
+      "steps": [
+        {
+          "step": "baseline: node-tsoa-api and its mandatory recipes",
+          "status": "passed"
+        },
+        {
+          "step": "node-base-controller: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-base-controller: packages",
+          "command": "npm install --include=dev tsoa@^6.2.1",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-base-controller: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-tsoa-security-gateway: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-tsoa-security-gateway: packages",
+          "command": "npm install --include=dev firebase-admin@^12.0.0",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-tsoa-security-gateway: instructions",
+          "command": "claude",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-tsoa-security-gateway: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-hmac-signature-guard: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-hmac-signature-guard: instructions",
+          "command": "claude",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-hmac-signature-guard: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/test.sh",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "node-tsoa-security-gateway",
+      "version": "1.1.0",
+      "contentHash": "sha256:21954b53aa4b7b4813179729425be8ae475c99932cf2d443090a1042b93e89d1",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:46:02.770Z",
+      "image": "recipe-catalog-toolchain",
+      "agent": "claude",
+      "steps": [
+        {
+          "step": "baseline: node-tsoa-api and its mandatory recipes",
+          "status": "passed"
+        },
+        {
+          "step": "node-base-controller: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-base-controller: packages",
+          "command": "npm install --include=dev tsoa@^6.2.1",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-base-controller: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-tsoa-security-gateway: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-tsoa-security-gateway: packages",
+          "command": "npm install --include=dev firebase-admin@^12.0.0",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-tsoa-security-gateway: instructions",
+          "command": "claude",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-tsoa-security-gateway: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/test.sh",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "node-generic-repository",
+      "version": "1.0.2",
+      "contentHash": "sha256:d7aaf9b81bd6e0ba70f888802d5cc1b86c7122e9f37b56499ba65fcbae9734fb",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:46:10.979Z",
+      "image": "recipe-catalog-toolchain",
+      "steps": [
+        {
+          "step": "baseline: node-tsoa-api and its mandatory recipes",
+          "status": "passed"
+        },
+        {
+          "step": "node-generic-repository: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-generic-repository: packages",
+          "command": "npm install --include=dev zod@^3.22.4",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-generic-repository: packages",
+          "command": "npm install --include=dev mongoose@^9.7.4",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-generic-repository: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/test.sh",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "node-characterization-test-harness",
+      "version": "1.0.1",
+      "contentHash": "sha256:91992dbc3012b52f4820c41e7bc0e9ed081917e2dc7ab5bb8af8f8077923618a",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:46:18.940Z",
+      "image": "recipe-catalog-toolchain",
+      "steps": [
+        {
+          "step": "baseline: node-tsoa-api and its mandatory recipes",
+          "status": "passed"
+        },
+        {
+          "step": "node-characterization-test-harness: files",
+          "status": "passed"
+        },
+        {
+          "step": "node-characterization-test-harness: packages",
+          "command": "npm install --include=dev --save-dev supertest@^6.3.3",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-characterization-test-harness: packages",
+          "command": "npm install --include=dev --save-dev @types/supertest@^6.0.2",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-characterization-test-harness: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/test.sh",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "react-delivery-scripts",
+      "version": "1.0.0",
+      "contentHash": "sha256:f6769cbbef4b6cafe3af0f176262c65c5f18a7714f5741ba982d0b8681ae7e81",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:46:18.940Z",
+      "image": "recipe-catalog-toolchain",
+      "steps": [
+        {
+          "step": "baseline: react-web and its mandatory recipes",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "kind": "recipe",
+      "id": "web-react-api-client",
+      "version": "1.0.1",
+      "contentHash": "sha256:c7b508412a5bbdb602c81a56e54b06d0f9f4257ba6f896e2510dbd4d78b8b4b5",
+      "status": "passed",
+      "checkedAt": "2026-10-20T18:46:22.942Z",
+      "image": "recipe-catalog-toolchain",
+      "steps": [
+        {
+          "step": "baseline: react-web and its mandatory recipes",
+          "status": "passed"
+        },
+        {
+          "step": "web-react-api-client: files",
+          "status": "passed"
+        },
+        {
+          "step": "web-react-api-client: verify",
+          "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/build.sh",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "delivery scripts",
+          "command": "bash scripts/test.sh",
+          "status": "passed",
+          "exitCode": 0
+        }
+      ]
+    }
+  ]
+}

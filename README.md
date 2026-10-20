@@ -18,7 +18,7 @@ stacks/<language>/<stack>/scaffolds/<id>/SCAFFOLD.md   + files/
 stacks/<language>/<stack>/recipes/<category>/<id>/RECIPE.md + files/
 ```
 
-Today: `dart/mobile-flutter`, `typescript/backend-node-tsoa`, `typescript/web-admin-react`. See `FORMAT.md` for the rules and `CATEGORIES.md` for the categories.
+Today: `dart/mobile-flutter`, `typescript/backend-node-tsoa`, `typescript/web-admin-react`, `csharp/backend-aspnetcore`. See `FORMAT.md` for the rules and `CATEGORIES.md` for the categories.
 
 ## Use it
 
@@ -36,7 +36,7 @@ npm run catalog -- build --version 0.2.0                  # write release/catalo
 Check an item the way a project receives it (FORMAT.md 7.3): a fresh project of its stack in the toolchain image, its mandatory recipes, the item, its instructions carried out by your coding agent, then the build and tests:
 
 ```bash
-docker build -t recipe-catalog-toolchain toolchain/                # once
+docker build -t recipe-catalog-toolchain toolchain/                # once: Node 20, Flutter 3.47.7, .NET SDK 10.0.401
 npm run catalog -- verify admob-monetization --image recipe-catalog-toolchain --agent claude
 npm run catalog -- release --version 0.2.0 --image recipe-catalog-toolchain --agent claude
 ```

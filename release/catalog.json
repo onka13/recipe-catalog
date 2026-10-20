@@ -1,0 +1,2312 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "0.1.0",
+  "generator": "recipe-catalog 0.1.0",
+  "stacks": [
+    {
+      "path": "stacks/csharp/backend-aspnetcore",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "backend-aspnetcore",
+        "name": "C# API (ASP.NET Core)",
+        "language": "csharp",
+        "projectType": "backend-api",
+        "requiredTools": [
+          "dotnet",
+          "git"
+        ],
+        "deliveryScriptsRecipe": "dotnet-delivery-scripts",
+        "defaultScaffold": "aspnetcore-api",
+        "addPackage": "dotnet add src/Api package {{NAME}} --version {{VERSION}}",
+        "addDevPackage": "dotnet add tests/Api.Tests package {{NAME}} --version {{VERSION}}"
+      },
+      "description": "An ASP.NET Core Web API with controllers on the current long-term-support .NET, and an xUnit test project.\n\n- `Directory.Build.props` at the tier root marks the tier and holds the build settings every project shares (target framework, nullable reference types, warnings as errors).\n- `src/Api/` is the API project, `tests/Api.Tests/` its tests; the solution file at the tier root holds both.\n- Packages go to the API project (`addPackage`) or to the test project (`addDevPackage`)."
+    },
+    {
+      "path": "stacks/dart/mobile-flutter",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "mobile-flutter",
+        "name": "Flutter mobile app",
+        "language": "dart",
+        "projectType": "mobile-app",
+        "requiredTools": [
+          "flutter",
+          "git"
+        ],
+        "deliveryScriptsRecipe": "flutter-delivery-scripts",
+        "defaultScaffold": "flutter-app",
+        "addPackage": "flutter pub add {{NAME}}:{{VERSION}}",
+        "addDevPackage": "flutter pub add dev:{{NAME}}:{{VERSION}}"
+      },
+      "description": "A Flutter app for Android, iOS and web. Recipes add capabilities behind small Dart interfaces (ports), with a mock adapter for tests and a real adapter for production."
+    },
+    {
+      "path": "stacks/typescript/backend-node-tsoa",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "backend-node-tsoa",
+        "name": "Node TypeScript API (Express, tsoa)",
+        "language": "typescript",
+        "projectType": "backend-api",
+        "requiredTools": [
+          "node",
+          "npm",
+          "git"
+        ],
+        "deliveryScriptsRecipe": "node-delivery-scripts",
+        "defaultScaffold": "node-tsoa-api",
+        "addPackage": "npm install --include=dev {{NAME}}@{{VERSION}}",
+        "addDevPackage": "npm install --include=dev --save-dev {{NAME}}@{{VERSION}}"
+      },
+      "description": "A TypeScript HTTP API on Express, with tsoa controllers. Recipes add infrastructure (errors, logging, configuration, repositories, security guards) as small modules with interfaces."
+    },
+    {
+      "path": "stacks/typescript/web-admin-react",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "web-admin-react",
+        "name": "React web admin",
+        "language": "typescript",
+        "projectType": "web-app",
+        "requiredTools": [
+          "node",
+          "npm",
+          "git"
+        ],
+        "deliveryScriptsRecipe": "react-delivery-scripts",
+        "defaultScaffold": "react-web",
+        "addPackage": "npm install --include=dev {{NAME}}@{{VERSION}}",
+        "addDevPackage": "npm install --include=dev --save-dev {{NAME}}@{{VERSION}}"
+      },
+      "description": "A React single-page app built with Vite and TypeScript, for admin and back-office screens."
+    }
+  ],
+  "scaffolds": [
+    {
+      "path": "stacks/csharp/backend-aspnetcore/scaffolds/aspnetcore-api",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "aspnetcore-api",
+        "name": "ASP.NET Core Web API",
+        "version": "1.0.0",
+        "language": "csharp",
+        "stack": "backend-aspnetcore",
+        "markerFile": "Directory.Build.props",
+        "requiredTools": [
+          "dotnet",
+          "git"
+        ],
+        "commands": [
+          "dotnet --version"
+        ],
+        "verify": [
+          "dotnet build --nologo",
+          "dotnet test --nologo"
+        ],
+        "mandatoryRecipes": [
+          "dotnet-delivery-scripts"
+        ]
+      },
+      "description": "A solution (`Api.slnx`) with an ASP.NET Core Web API (`src/Api/`, controllers) and an xUnit test project (`tests/Api.Tests/`).\n\n- `Directory.Build.props` is the tier's marker file and holds the shared build settings: `net10.0`, nullable reference types, implicit usings, warnings as errors.\n- `HealthController` answers `GET /health`; `HealthEndpointTests` starts the app with `WebApplicationFactory<Program>` and checks it.",
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": ".gitignore",
+          "content": "bin/\nobj/\nTestResults/\n"
+        },
+        {
+          "path": "Api.slnx",
+          "content": "<Solution>\n  <Folder Name=\"/src/\">\n    <Project Path=\"src/Api/Api.csproj\" />\n  </Folder>\n  <Folder Name=\"/tests/\">\n    <Project Path=\"tests/Api.Tests/Api.Tests.csproj\" />\n  </Folder>\n</Solution>\n"
+        },
+        {
+          "path": "Directory.Build.props",
+          "content": "<Project>\n  <PropertyGroup>\n    <TargetFramework>net10.0</TargetFramework>\n    <Nullable>enable</Nullable>\n    <ImplicitUsings>enable</ImplicitUsings>\n    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>\n  </PropertyGroup>\n</Project>\n"
+        },
+        {
+          "path": "src/Api/Api.csproj",
+          "content": "<Project Sdk=\"Microsoft.NET.Sdk.Web\">\n</Project>\n"
+        },
+        {
+          "path": "src/Api/appsettings.json",
+          "content": "{\n  \"Logging\": {\n    \"LogLevel\": {\n      \"Default\": \"Information\",\n      \"Microsoft.AspNetCore\": \"Warning\"\n    }\n  },\n  \"AllowedHosts\": \"*\"\n}\n"
+        },
+        {
+          "path": "src/Api/Controllers/HealthController.cs",
+          "content": "using Microsoft.AspNetCore.Mvc;\n\nnamespace Api.Controllers;\n\npublic sealed record HealthStatus(string Status);\n\n[ApiController]\n[Route(\"health\")]\npublic sealed class HealthController : ControllerBase\n{\n    [HttpGet]\n    public ActionResult<HealthStatus> Get() => new HealthStatus(\"ok\");\n}\n"
+        },
+        {
+          "path": "src/Api/Program.cs",
+          "content": "var builder = WebApplication.CreateBuilder(args);\n\nbuilder.Services.AddControllers();\n\nvar app = builder.Build();\n\napp.MapControllers();\n\napp.Run();\n\n/// <summary>Lets the test project start the app with WebApplicationFactory.</summary>\npublic partial class Program;\n"
+        },
+        {
+          "path": "tests/Api.Tests/Api.Tests.csproj",
+          "content": "<Project Sdk=\"Microsoft.NET.Sdk\">\n  <PropertyGroup>\n    <IsPackable>false</IsPackable>\n  </PropertyGroup>\n  <ItemGroup>\n    <PackageReference Include=\"Microsoft.AspNetCore.Mvc.Testing\" Version=\"10.0.12\" />\n    <PackageReference Include=\"Microsoft.NET.Test.Sdk\" Version=\"18.10.1\" />\n    <PackageReference Include=\"xunit\" Version=\"2.9.3\" />\n    <PackageReference Include=\"xunit.runner.visualstudio\" Version=\"3.1.5\" />\n  </ItemGroup>\n  <ItemGroup>\n    <Using Include=\"Xunit\" />\n  </ItemGroup>\n  <ItemGroup>\n    <ProjectReference Include=\"../../src/Api/Api.csproj\" />\n  </ItemGroup>\n</Project>\n"
+        },
+        {
+          "path": "tests/Api.Tests/HealthEndpointTests.cs",
+          "content": "using System.Net;\nusing System.Net.Http.Json;\nusing Microsoft.AspNetCore.Mvc.Testing;\n\nnamespace Api.Tests;\n\npublic sealed class HealthEndpointTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>\n{\n    [Fact]\n    public async Task Get_health_answers_ok()\n    {\n        var response = await factory.CreateClient().GetAsync(\"/health\");\n\n        Assert.Equal(HttpStatusCode.OK, response.StatusCode);\n        var body = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();\n        Assert.Equal(\"ok\", body?[\"status\"]);\n    }\n}\n"
+        }
+      ],
+      "contentHash": "sha256:2c3291c2139d2d7927e196c692013bf4d37b0e87a03c6ebd074b1c8ca816aaea"
+    },
+    {
+      "path": "stacks/dart/mobile-flutter/scaffolds/flutter-app",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "flutter-app",
+        "name": "Flutter App",
+        "version": "1.0.0",
+        "language": "dart",
+        "stack": "mobile-flutter",
+        "markerFile": "pubspec.yaml",
+        "requiredTools": [
+          "flutter",
+          "git"
+        ],
+        "commands": [
+          "flutter create --project-name {{PACKAGE_NAME}} --org com.{{PACKAGE_NAME}} --platforms android,ios,web ."
+        ],
+        "verify": [
+          "flutter analyze"
+        ],
+        "mandatoryRecipes": [
+          "flutter-delivery-scripts",
+          "core-foundation",
+          "app-theming"
+        ]
+      },
+      "description": "A Flutter app created with flutter create (Android, iOS and web), checked with flutter analyze.",
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [],
+      "contentHash": "sha256:a987dbcf5ec6028cbaa546d19c058349b9d3144b4b2eddb58926e2793a0696dd"
+    },
+    {
+      "path": "stacks/typescript/backend-node-tsoa/scaffolds/node-tsoa-api",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "node-tsoa-api",
+        "name": "Node TypeScript API",
+        "version": "2.0.0",
+        "language": "typescript",
+        "stack": "backend-node-tsoa",
+        "markerFile": "package.json",
+        "requiredTools": [
+          "node",
+          "npm",
+          "git"
+        ],
+        "commands": [
+          "npm init -y > /dev/null",
+          "npm pkg set name={{PACKAGE_NAME}} private=true main=dist/index.js scripts.generate=\"tsoa spec-and-routes\" scripts.build=\"npm run generate && tsc -p tsconfig.json\" scripts.lint=\"npm run generate && tsc -p tsconfig.json --noEmit\" scripts.test='npm run generate && node --import tsx --test $(find src -name \"*.test.ts\")' scripts.start=\"node dist/index.js\"",
+          "npm install --include=dev --no-audit --no-fund express@4.21.2 tsoa@6.6.0",
+          "npm install --include=dev --no-audit --no-fund --save-dev typescript@5.6.3 @types/node@20.17.10 @types/express@4.17.21 tsx@4.23.15"
+        ],
+        "verify": [
+          "npm run lint",
+          "npm run build",
+          "npm run test"
+        ],
+        "mandatoryRecipes": [
+          "node-delivery-scripts",
+          "node-core-foundation",
+          "node-observability-and-env",
+          "node-feature-flags",
+          "node-boundary-validation"
+        ]
+      },
+      "description": "An Express API with tsoa controllers.\n\n- `src/server.ts` builds the app: middleware first, then `RegisterRoutes(app)` from `src/generated/routes.ts`.\n- `src/index.ts` starts the server on `PORT`.\n- Controllers live in `src/features/<feature>/presentation/controllers/*Controller.ts`; `tsoa.json` finds them there. One health controller answers `GET /health`.\n- `npm run generate` writes the routes and the OpenAPI spec to `src/generated/` (not committed). `build`, `lint` and `test` run it first.\n- `npm run test` runs every `src/**/*.test.ts` file with the Node test runner and `tsx`, without a separate build.",
+      "changelog": [
+        {
+          "version": "2.0.0",
+          "notes": [
+            "The scaffold is an Express and tsoa API: `tsoa.json`, `src/server.ts` (the app), `src/index.ts` (starts it), a health controller, and routes generated before every build, lint and test.",
+            "TypeScript tests run directly with `node --import tsx --test`; the scaffold ships one for `GET /health`."
+          ]
+        },
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": ".gitignore",
+          "content": "node_modules/\ndist/\nsrc/generated/\n"
+        },
+        {
+          "path": "src/features/health/health.test.ts",
+          "content": "import assert from 'node:assert/strict';\nimport type { AddressInfo } from 'node:net';\nimport { test } from 'node:test';\nimport { createServer } from '../../server';\n\ntest('GET /health answers ok', async () => {\n  const server = createServer().listen(0);\n  await new Promise((resolve) => server.once('listening', resolve));\n  try {\n    const { port } = server.address() as AddressInfo;\n    const response = await fetch(`http://127.0.0.1:${port}/health`);\n    assert.equal(response.status, 200);\n    assert.deepEqual(await response.json(), { status: 'ok' });\n  } finally {\n    server.close();\n  }\n});\n"
+        },
+        {
+          "path": "src/features/health/presentation/controllers/HealthController.ts",
+          "content": "import { Controller, Get, Route } from 'tsoa';\n\nexport interface HealthStatus {\n  status: 'ok';\n}\n\n@Route('health')\nexport class HealthController extends Controller {\n  @Get()\n  public async getHealth(): Promise<HealthStatus> {\n    return { status: 'ok' };\n  }\n}\n"
+        },
+        {
+          "path": "src/index.ts",
+          "content": "import { createServer } from './server';\n\nconst port = Number(process.env.PORT ?? 3000);\n\ncreateServer().listen(port, () => {\n  console.log(`Listening on port ${port}`);\n});\n"
+        },
+        {
+          "path": "src/server.ts",
+          "content": "import express from 'express';\nimport { RegisterRoutes } from './generated/routes';\n\n/** Builds the app: middleware first, then the routes tsoa generates from the controllers (`npm run generate`). */\nexport function createServer() {\n  const app = express();\n  app.use(express.json());\n  RegisterRoutes(app);\n  return app;\n}\n"
+        },
+        {
+          "path": "tsconfig.json",
+          "content": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"module\": \"commonjs\",\n    \"rootDir\": \"src\",\n    \"outDir\": \"dist\",\n    \"strict\": true,\n    \"esModuleInterop\": true,\n    \"experimentalDecorators\": true,\n    \"skipLibCheck\": true\n  },\n  \"include\": [\n    \"src\"\n  ]\n}\n"
+        },
+        {
+          "path": "tsoa.json",
+          "content": "{\n  \"entryFile\": \"src/server.ts\",\n  \"controllerPathGlobs\": [\"src/features/**/controllers/*Controller.ts\"],\n  \"noImplicitAdditionalProperties\": \"throw-on-extras\",\n  \"spec\": {\n    \"outputDirectory\": \"src/generated\",\n    \"specVersion\": 3\n  },\n  \"routes\": {\n    \"routesDir\": \"src/generated\"\n  }\n}\n"
+        }
+      ],
+      "contentHash": "sha256:6c4103523bebd2c755f0c4a1b71f3ab43427ca6adbcd417d2de0e2f3fb1f9d90"
+    },
+    {
+      "path": "stacks/typescript/web-admin-react/scaffolds/react-web",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "react-web",
+        "name": "React Web App",
+        "version": "1.0.1",
+        "language": "typescript",
+        "stack": "web-admin-react",
+        "markerFile": "package.json",
+        "requiredTools": [
+          "node",
+          "npm",
+          "git"
+        ],
+        "commands": [
+          "npx -y create-vite@5.5.5 vite-scaffold --template react-ts",
+          "cp -a vite-scaffold/. . && rm -rf vite-scaffold",
+          "npm pkg set name={{PACKAGE_NAME}} scripts.test=\"node --test\"",
+          "npm install --include=dev --no-audit --no-fund"
+        ],
+        "verify": [
+          "npm run build"
+        ],
+        "mandatoryRecipes": [
+          "react-delivery-scripts"
+        ]
+      },
+      "description": "A React and TypeScript app from the Vite template, with a test script that runs node --test.",
+      "changelog": [
+        {
+          "version": "1.0.1",
+          "notes": [
+            "Fixed: create-vite stopped at its package-name prompt without a terminal (the folder name `.vite-scaffold` is not a valid package name), so the scaffold created nothing."
+          ]
+        },
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [],
+      "contentHash": "sha256:3dd87aadc68ff80de1149e573cd17e6238d8617e79e8cc2427b2f3ffdb27a3e2"
+    }
+  ],
+  "recipes": [
+    {
+      "path": "stacks/csharp/backend-aspnetcore/recipes/core/aspnetcore-core-foundation",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "aspnetcore-core-foundation",
+        "name": "ASP.NET Core Foundation (Problem Details, Typed Settings, Health Checks)",
+        "version": "1.0.0",
+        "language": "csharp",
+        "stack": "backend-aspnetcore",
+        "category": "core",
+        "standardType": "custom",
+        "order": 10,
+        "tags": [
+          "errors",
+          "problem-details",
+          "configuration",
+          "options",
+          "health-checks"
+        ],
+        "verify": [
+          "dotnet build --nologo"
+        ]
+      },
+      "description": "The base the other C# recipes build on: an exception taxonomy (`AppException` with `InvalidInputException`, `ForbiddenException`, `NotFoundException`, `ConflictException`) answered as RFC 9457 problem details by one `IExceptionHandler`, typed settings bound from the `Api` section and validated at startup (`ApiOptions`), and a readiness endpoint `GET /health/ready` from ASP.NET Core health checks. An unexpected exception is logged and answered with 500 without its message.",
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "src/Api/Core/Configuration/ApiOptions.cs",
+          "content": "using System.ComponentModel.DataAnnotations;\n\nnamespace Api.Core.Configuration;\n\n/// <summary>\n/// The API's own settings (section \"Api\"), bound and validated at startup: a missing or invalid value stops the app\n/// before it serves a request. Read them through IOptions&lt;ApiOptions&gt;, never through IConfiguration in services.\n/// </summary>\npublic sealed class ApiOptions\n{\n    public const string Section = \"Api\";\n\n    [Required]\n    public string ServiceName { get; init; } = string.Empty;\n}\n"
+        },
+        {
+          "path": "src/Api/Core/CoreFoundationExtensions.cs",
+          "content": "using Api.Core.Configuration;\nusing Api.Core.Errors;\n\nnamespace Api.Core;\n\npublic static class CoreFoundationExtensions\n{\n    /// <summary>Problem details for every error, validated typed settings and health checks.</summary>\n    public static IServiceCollection AddCoreFoundation(this IServiceCollection services, IConfiguration configuration)\n    {\n        services.AddProblemDetails();\n        services.AddExceptionHandler<AppExceptionHandler>();\n        services.AddOptions<ApiOptions>()\n            .Bind(configuration.GetSection(ApiOptions.Section))\n            .ValidateDataAnnotations()\n            .ValidateOnStart();\n        services.AddHealthChecks();\n        return services;\n    }\n\n    /// <summary>The exception handler first, problem details for bare status codes, and GET /health/ready.</summary>\n    public static WebApplication UseCoreFoundation(this WebApplication app)\n    {\n        app.UseExceptionHandler();\n        app.UseStatusCodePages();\n        app.MapHealthChecks(\"/health/ready\");\n        return app;\n    }\n}\n"
+        },
+        {
+          "path": "src/Api/Core/Errors/AppException.cs",
+          "content": "namespace Api.Core.Errors;\n\n/// <summary>An expected failure with its HTTP status; AppExceptionHandler turns it into a problem details response.</summary>\npublic abstract class AppException(string message, int statusCode, string title) : Exception(message)\n{\n    public int StatusCode { get; } = statusCode;\n\n    public string Title { get; } = title;\n}\n\npublic sealed class InvalidInputException(string message) : AppException(message, StatusCodes.Status400BadRequest, \"Invalid input\");\n\npublic sealed class ForbiddenException(string message) : AppException(message, StatusCodes.Status403Forbidden, \"Forbidden\");\n\npublic sealed class NotFoundException(string entity, string id) : AppException($\"{entity} {id} was not found.\", StatusCodes.Status404NotFound, \"Not found\");\n\npublic sealed class ConflictException(string message) : AppException(message, StatusCodes.Status409Conflict, \"Conflict\");\n"
+        },
+        {
+          "path": "src/Api/Core/Errors/AppExceptionHandler.cs",
+          "content": "using Microsoft.AspNetCore.Diagnostics;\n\nnamespace Api.Core.Errors;\n\n/// <summary>\n/// Every exception becomes an RFC 9457 problem details response. An AppException keeps its status and message; any\n/// other exception is logged and answered with 500 and no internal detail.\n/// </summary>\npublic sealed class AppExceptionHandler(IProblemDetailsService problemDetails, ILogger<AppExceptionHandler> logger) : IExceptionHandler\n{\n    public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)\n    {\n        var (status, title, detail) = exception is AppException app\n            ? (app.StatusCode, app.Title, app.Message)\n            : (StatusCodes.Status500InternalServerError, \"An unexpected error occurred.\", null);\n        if (exception is not AppException)\n        {\n            logger.LogError(exception, \"Unhandled exception for {Method} {Path}\", httpContext.Request.Method, httpContext.Request.Path);\n        }\n\n        httpContext.Response.StatusCode = status;\n        return await problemDetails.TryWriteAsync(new ProblemDetailsContext\n        {\n            HttpContext = httpContext,\n            Exception = exception,\n            ProblemDetails = { Status = status, Title = title, Detail = detail },\n        });\n    }\n}\n"
+        },
+        {
+          "path": "tests/Api.Tests/Core/AppExceptionHandlerTests.cs",
+          "content": "using Api.Core.Errors;\nusing Microsoft.AspNetCore.Http;\nusing Microsoft.Extensions.DependencyInjection;\nusing Microsoft.Extensions.Logging.Abstractions;\n\nnamespace Api.Tests.Core;\n\npublic sealed class AppExceptionHandlerTests\n{\n    private static async Task<HttpContext> Handle(Exception exception)\n    {\n        var services = new ServiceCollection().AddLogging().AddProblemDetails().BuildServiceProvider();\n        var context = new DefaultHttpContext { RequestServices = services };\n        context.Response.Body = new MemoryStream();\n        var handler = new AppExceptionHandler(services.GetRequiredService<IProblemDetailsService>(), NullLogger<AppExceptionHandler>.Instance);\n        Assert.True(await handler.TryHandleAsync(context, exception, CancellationToken.None));\n        return context;\n    }\n\n    private static string Body(HttpContext context)\n    {\n        context.Response.Body.Position = 0;\n        return new StreamReader(context.Response.Body).ReadToEnd();\n    }\n\n    [Fact]\n    public async Task An_app_exception_keeps_its_status_and_message()\n    {\n        var context = await Handle(new NotFoundException(\"Order\", \"42\"));\n\n        Assert.Equal(StatusCodes.Status404NotFound, context.Response.StatusCode);\n        Assert.Contains(\"Order 42 was not found.\", Body(context));\n    }\n\n    [Fact]\n    public async Task Any_other_exception_is_a_500_without_its_message()\n    {\n        var context = await Handle(new InvalidOperationException(\"connection string secret\"));\n\n        Assert.Equal(StatusCodes.Status500InternalServerError, context.Response.StatusCode);\n        Assert.DoesNotContain(\"connection string secret\", Body(context));\n    }\n}\n"
+        },
+        {
+          "path": "tests/Api.Tests/Core/ReadinessTests.cs",
+          "content": "using System.Net;\nusing Microsoft.AspNetCore.Mvc.Testing;\n\nnamespace Api.Tests.Core;\n\npublic sealed class ReadinessTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>\n{\n    [Fact]\n    public async Task Get_health_ready_answers_healthy()\n    {\n        var response = await factory.CreateClient().GetAsync(\"/health/ready\");\n\n        Assert.Equal(HttpStatusCode.OK, response.StatusCode);\n        Assert.Equal(\"Healthy\", await response.Content.ReadAsStringAsync());\n    }\n}\n"
+        }
+      ],
+      "instructions": [
+        {
+          "target": "src/Api/Program.cs",
+          "instruction": "Add `using Api.Core;` at the top. After `builder.Services.AddControllers();`, call `builder.Services.AddCoreFoundation(builder.Configuration);`. Right after `var app = builder.Build();`, call `app.UseCoreFoundation();`."
+        },
+        {
+          "target": "src/Api/appsettings.json",
+          "instruction": "Add a top-level `\"Api\": { \"ServiceName\": \"{{PROJECT_NAME}}\" }` section."
+        }
+      ],
+      "conventions": [
+        {
+          "pattern": "src/Api/**/*.cs",
+          "rule": "Signal an expected failure by throwing one of the `AppException` types from `Api.Core.Errors`; never build error responses by hand in a controller. Settings a service needs go into an options class with data annotations, bound and validated like `ApiOptions`, and are read through `IOptions<T>`."
+        }
+      ],
+      "contentHash": "sha256:f7a9461a7b9f81503e244ad3c6bfe8e0f1267c34f99efecb3e252b056e22176a"
+    },
+    {
+      "path": "stacks/csharp/backend-aspnetcore/recipes/delivery/dotnet-delivery-scripts",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "dotnet-delivery-scripts",
+        "name": ".NET Delivery Scripts",
+        "version": "1.0.0",
+        "language": "csharp",
+        "stack": "backend-aspnetcore",
+        "category": "delivery",
+        "standardType": "delivery-scripts",
+        "order": 0,
+        "tags": [
+          "delivery",
+          "scripts"
+        ],
+        "onlyIfMissing": [
+          "scripts/build.sh",
+          "scripts/test.sh"
+        ],
+        "verify": [
+          "bash scripts/build.sh"
+        ]
+      },
+      "description": "Writes scripts/build.sh (`dotnet build`) and scripts/test.sh (`dotnet test`) into the tier folder. The job engine runs them as the tier's build and test checks. They need only one solution or project file at the tier root, so they work on an existing C# solution too. Existing scripts are never overwritten.\n\n`test.sh` names its failing-test pattern in a header comment: group 1 is the failing test's full name in `dotnet test` output (`  Failed Api.Tests.HealthEndpointTests.Get_health_answers_ok [73 ms]`, theories with their arguments).",
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/build.sh",
+          "content": "#!/usr/bin/env bash\n# Build check for this tier. The job engine runs it with this folder as the working directory;\n# exit code 0 means pass. Edit it freely: it belongs to this project.\nset -euo pipefail\ncd \"$(dirname \"$0\")/..\"\ndotnet build --nologo\n"
+        },
+        {
+          "path": "scripts/test.sh",
+          "content": "#!/usr/bin/env bash\n# Test run for this tier. The job engine runs it with this folder as the working directory;\n# exit code 0 means pass. Edit it freely: it belongs to this project.\n# failing-test-pattern: ^\\s+Failed (.+) \\[[^\\]]+\\]\\s*$\nset -euo pipefail\ncd \"$(dirname \"$0\")/..\"\ndotnet test --nologo\n"
+        }
+      ],
+      "instructions": [],
+      "contentHash": "sha256:2adbdec12c61b806bccbd7eac847d505c6fd13549adfe30e4301cefb47bf95f0"
+    },
+    {
+      "path": "stacks/dart/mobile-flutter/recipes/core/core-foundation",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "core-foundation",
+        "name": "Flutter Core Foundation (LogHelper, Result, Failures)",
+        "version": "1.0.1",
+        "language": "dart",
+        "stack": "mobile-flutter",
+        "category": "core",
+        "standardType": "logging",
+        "interfacePort": "LoggerPort",
+        "order": 10,
+        "tags": [
+          "logging",
+          "errors",
+          "result-type",
+          "core-utilities"
+        ],
+        "parameters": [
+          {
+            "key": "APP_DISPLAY_NAME",
+            "label": "Application Display Name",
+            "description": "User-facing title of the application",
+            "default": "App",
+            "secret": false
+          }
+        ],
+        "verify": [
+          "flutter analyze"
+        ]
+      },
+      "description": "Foundational logging utility, Result<T, Failure> functional monad, and universal domain failure hierarchy.",
+      "changelog": [
+        {
+          "version": "1.0.1",
+          "notes": [
+            "Fixed: `flutter analyze` failed. `Result.when` called the `Failure` value instead of the `failure` callback (the pattern variable hid the parameter), and `UnexpectedFailure` now uses a super parameter."
+          ]
+        },
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "lib/core/errors/failures.dart",
+          "content": "abstract class Failure {\n  final String message;\n  final String? code;\n  final Object? cause;\n\n  const Failure(this.message, {this.code, this.cause});\n\n  @override\n  String toString() => 'Failure(message: $message, code: $code)';\n}\n\nclass ServerFailure extends Failure {\n  const ServerFailure(super.message, {super.code, super.cause});\n}\n\nclass StorageFailure extends Failure {\n  const StorageFailure(super.message, {super.code, super.cause});\n}\n\nclass ValidationFailure extends Failure {\n  const ValidationFailure(super.message, {super.code, super.cause});\n}\n\nclass UnexpectedFailure extends Failure {\n  const UnexpectedFailure([super.message = 'An unexpected error occurred', Object? cause]) : super(cause: cause);\n}\n"
+        },
+        {
+          "path": "lib/core/network/result.dart",
+          "content": "import 'package:{{PACKAGE_NAME}}/core/errors/failures.dart';\n\nsealed class Result<T> {\n  const Result();\n\n  factory Result.success(T data) = Success<T>;\n  factory Result.failure(Failure failure) = Error<T>;\n\n  bool get isSuccess => this is Success<T>;\n  bool get isFailure => this is Error<T>;\n\n  T? get dataOrNull => switch (this) {\n    Success(:final data) => data,\n    Error() => null,\n  };\n\n  Failure? get failureOrNull => switch (this) {\n    Success() => null,\n    Error(:final failure) => failure,\n  };\n\n  R when<R>({\n    required R Function(T data) success,\n    required R Function(Failure failure) failure,\n  }) {\n    return switch (this) {\n      Success(:final data) => success(data),\n      Error(failure: final error) => failure(error),\n    };\n  }\n}\n\nfinal class Success<T> extends Result<T> {\n  final T data;\n  const Success(this.data);\n}\n\nfinal class Error<T> extends Result<T> {\n  final Failure failure;\n  const Error(this.failure);\n}\n"
+        },
+        {
+          "path": "lib/core/utils/log_helper.dart",
+          "content": "import 'dart:developer' as developer;\nimport 'package:flutter/foundation.dart';\n\nenum LogLevel { debug, info, warning, error }\n\nclass LogHelper {\n  static void debug(String message, {String tag = 'APP'}) => _log(LogLevel.debug, message, tag: tag);\n  static void info(String message, {String tag = 'APP'}) => _log(LogLevel.info, message, tag: tag);\n  static void warning(String message, {String tag = 'APP'}) => _log(LogLevel.warning, message, tag: tag);\n  static void error(String message, {Object? error, StackTrace? stackTrace, String tag = 'APP'}) {\n    _log(LogLevel.error, message, tag: tag, error: error, stackTrace: stackTrace);\n  }\n\n  static void _log(LogLevel level, String message, {String tag = 'APP', Object? error, StackTrace? stackTrace}) {\n    if (kDebugMode) {\n      final color = switch (level) {\n        LogLevel.debug => '\\x1B[34m',\n        LogLevel.info => '\\x1B[32m',\n        LogLevel.warning => '\\x1B[33m',\n        LogLevel.error => '\\x1B[31m',\n      };\n      developer.log('$color[${level.name.toUpperCase()}][$tag] $message\\x1B[0m', error: error, stackTrace: stackTrace);\n    }\n  }\n}\n"
+        }
+      ],
+      "instructions": [],
+      "contentHash": "sha256:7dbfc4c0dc22a6407c99afe0ebed896f0231da18be137618808e3a5420adb84a"
+    },
+    {
+      "path": "stacks/dart/mobile-flutter/recipes/delivery/flutter-delivery-scripts",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "flutter-delivery-scripts",
+        "name": "Flutter Delivery Scripts",
+        "version": "1.0.0",
+        "language": "dart",
+        "stack": "mobile-flutter",
+        "category": "delivery",
+        "standardType": "delivery-scripts",
+        "order": 0,
+        "tags": [
+          "delivery",
+          "scripts"
+        ],
+        "onlyIfMissing": [
+          "scripts/build.sh",
+          "scripts/test.sh"
+        ],
+        "verify": [
+          "bash scripts/build.sh"
+        ]
+      },
+      "description": "Writes scripts/build.sh (flutter pub get, flutter analyze) and scripts/test.sh (flutter test) into the tier folder. The job engine runs them as the tier's build and test checks. Existing scripts are never overwritten.",
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/build.sh",
+          "content": "#!/usr/bin/env bash\n# Build check for this tier. The job engine runs it with this folder as the working directory;\n# exit code 0 means pass. Edit it freely: it belongs to this project.\nset -euo pipefail\ncd \"$(dirname \"$0\")/..\"\nflutter pub get\nflutter analyze\n"
+        },
+        {
+          "path": "scripts/test.sh",
+          "content": "#!/usr/bin/env bash\n# Test run for this tier. The job engine runs it with this folder as the working directory;\n# exit code 0 means pass. Edit it freely: it belongs to this project.\nset -euo pipefail\ncd \"$(dirname \"$0\")/..\"\nflutter pub get\nflutter test\n"
+        }
+      ],
+      "instructions": [],
+      "contentHash": "sha256:7692f78cd1886298db411cb6c3d3dfca9fab772ba795957d95f163823cd95a0f"
+    },
+    {
+      "path": "stacks/dart/mobile-flutter/recipes/media/speech-to-text",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "speech-to-text",
+        "name": "Speech to Text Transcription Service",
+        "version": "1.0.1",
+        "language": "dart",
+        "stack": "mobile-flutter",
+        "category": "media",
+        "standardType": "stt",
+        "interfacePort": "SttServicePort",
+        "order": 50,
+        "tags": [
+          "stt",
+          "speech-to-text",
+          "voice",
+          "audio",
+          "transcription",
+          "microphone"
+        ],
+        "platformPermissions": [
+          "android.permission.RECORD_AUDIO",
+          "android.permission.INTERNET",
+          "NSSpeechRecognitionUsageDescription",
+          "NSMicrophoneUsageDescription"
+        ],
+        "dependsOn": [
+          "core-foundation"
+        ],
+        "parameters": [
+          {
+            "key": "STT_LOCALE_ID",
+            "label": "Default Recognition Locale",
+            "description": "BCP-47 language tag for transcription (e.g. en_US, tr_TR)",
+            "default": "en_US",
+            "secret": false
+          }
+        ],
+        "packages": [
+          {
+            "name": "speech_to_text",
+            "version": "^7.0.0",
+            "dev": false
+          }
+        ],
+        "verify": [
+          "flutter analyze"
+        ]
+      },
+      "description": "Continuous and on-demand spoken audio recognition and transcription stream via device microphone.",
+      "changelog": [
+        {
+          "version": "1.0.1",
+          "notes": [
+            "The locale goes through `SpeechListenOptions`; the `localeId` argument of `listen` is deprecated and failed `flutter analyze`."
+          ]
+        },
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "lib/core/stt/mock_stt_service_adapter.dart",
+          "content": "import 'package:{{PACKAGE_NAME}}/core/stt/stt_service_port.dart';\nimport 'package:{{PACKAGE_NAME}}/core/utils/log_helper.dart';\n\nclass MockSttServiceAdapter implements SttServicePort {\n  bool _isListening = false;\n\n  @override\n  bool get isListening => _isListening;\n\n  @override\n  bool get isAvailable => true;\n\n  @override\n  Future<bool> initialize() async {\n    LogHelper.info('Mock STT Service initialized (test mode)', tag: 'STT');\n    return true;\n  }\n\n  @override\n  Future<void> startListening({required Function(String recognizedWords) onResult, String? localeId}) async {\n    _isListening = true;\n    LogHelper.info('Mock STT started listening', tag: 'STT');\n    await Future.delayed(const Duration(milliseconds: 300));\n    onResult('Sample transcribed voice command');\n  }\n\n  @override\n  Future<void> stopListening() async {\n    _isListening = false;\n    LogHelper.info('Mock STT stopped', tag: 'STT');\n  }\n\n  @override\n  Future<void> cancelListening() async {\n    _isListening = false;\n    LogHelper.info('Mock STT cancelled', tag: 'STT');\n  }\n}\n"
+        },
+        {
+          "path": "lib/core/stt/speech_to_text_adapter.dart",
+          "content": "import 'package:speech_to_text/speech_to_text.dart' as stt;\nimport 'package:{{PACKAGE_NAME}}/core/stt/stt_service_port.dart';\nimport 'package:{{PACKAGE_NAME}}/core/utils/log_helper.dart';\n\nclass SpeechToTextAdapter implements SttServicePort {\n  final stt.SpeechToText _speech = stt.SpeechToText();\n  bool _isAvailable = false;\n  final String _defaultLocale = '{{STT_LOCALE_ID}}';\n\n  @override\n  bool get isListening => _speech.isListening;\n\n  @override\n  bool get isAvailable => _isAvailable;\n\n  @override\n  Future<bool> initialize() async {\n    try {\n      _isAvailable = await _speech.initialize(\n        onStatus: (status) => LogHelper.debug('STT Status: $status', tag: 'STT'),\n        onError: (errorNotification) => LogHelper.error('STT Error: ${errorNotification.errorMsg}', tag: 'STT'),\n      );\n      LogHelper.info('SpeechToText initialized (available: $_isAvailable)', tag: 'STT');\n      return _isAvailable;\n    } catch (e, st) {\n      LogHelper.error('Failed to initialize SpeechToText', error: e, stackTrace: st, tag: 'STT');\n      return false;\n    }\n  }\n\n  @override\n  Future<void> startListening({required Function(String recognizedWords) onResult, String? localeId}) async {\n    if (!_isAvailable) {\n      await initialize();\n    }\n    if (_isAvailable) {\n      await _speech.listen(\n        listenOptions: stt.SpeechListenOptions(localeId: localeId ?? _defaultLocale),\n        onResult: (result) {\n          onResult(result.recognizedWords);\n        },\n      );\n    }\n  }\n\n  @override\n  Future<void> stopListening() async {\n    await _speech.stop();\n  }\n\n  @override\n  Future<void> cancelListening() async {\n    await _speech.cancel();\n  }\n}\n"
+        },
+        {
+          "path": "lib/core/stt/stt_service_port.dart",
+          "content": "abstract interface class SttServicePort {\n  Future<bool> initialize();\n  Future<void> startListening({required Function(String recognizedWords) onResult, String? localeId});\n  Future<void> stopListening();\n  Future<void> cancelListening();\n  bool get isListening;\n  bool get isAvailable;\n}\n"
+        }
+      ],
+      "instructions": [
+        {
+          "target": "android/app/src/main/AndroidManifest.xml",
+          "instruction": "Add <uses-permission android:name=\"android.permission.RECORD_AUDIO\"/> and <uses-permission android:name=\"android.permission.INTERNET\"/> to AndroidManifest.xml."
+        },
+        {
+          "target": "ios/Runner/Info.plist",
+          "instruction": "Add NSSpeechRecognitionUsageDescription and NSMicrophoneUsageDescription keys with descriptive strings to Info.plist."
+        }
+      ],
+      "contentHash": "sha256:8300ee875c9a0ed6282af6e88a35b268d701c3fd911a3f73b61c990692160e86"
+    },
+    {
+      "path": "stacks/dart/mobile-flutter/recipes/media/text-to-speech",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "text-to-speech",
+        "name": "Text to Speech Synthesis Service",
+        "version": "1.0.0",
+        "language": "dart",
+        "stack": "mobile-flutter",
+        "category": "media",
+        "standardType": "tts",
+        "interfacePort": "TtsServicePort",
+        "order": 55,
+        "tags": [
+          "tts",
+          "text-to-speech",
+          "voice",
+          "audio",
+          "synthesis",
+          "speech"
+        ],
+        "dependsOn": [
+          "core-foundation"
+        ],
+        "parameters": [
+          {
+            "key": "TTS_DEFAULT_LANGUAGE",
+            "label": "Default TTS Language",
+            "description": "BCP-47 language tag (e.g. en-US, tr-TR)",
+            "default": "en-US",
+            "secret": false
+          },
+          {
+            "key": "TTS_SPEECH_RATE",
+            "label": "Speech Rate (0.0 to 1.0)",
+            "description": "Speech rate playback speed",
+            "default": "0.5",
+            "secret": false
+          }
+        ],
+        "packages": [
+          {
+            "name": "flutter_tts",
+            "version": "^4.2.0",
+            "dev": false
+          }
+        ],
+        "verify": [
+          "flutter analyze"
+        ]
+      },
+      "description": "Synthesizes spoken audio from text strings with configurable pitch, rate, and voice accents.",
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "lib/core/tts/flutter_tts_adapter.dart",
+          "content": "import 'package:flutter_tts/flutter_tts.dart';\nimport 'package:{{PACKAGE_NAME}}/core/tts/tts_service_port.dart';\nimport 'package:{{PACKAGE_NAME}}/core/utils/log_helper.dart';\n\nclass FlutterTtsAdapter implements TtsServicePort {\n  final FlutterTts _flutterTts = FlutterTts();\n  bool _speaking = false;\n\n  @override\n  bool get isSpeaking => _speaking;\n\n  @override\n  Future<void> init() async {\n    await _flutterTts.setLanguage('{{TTS_DEFAULT_LANGUAGE}}');\n    await _flutterTts.setSpeechRate(double.tryParse('{{TTS_SPEECH_RATE}}') ?? 0.5);\n    _flutterTts.setStartHandler(() => _speaking = true);\n    _flutterTts.setCompletionHandler(() => _speaking = false);\n    _flutterTts.setErrorHandler((msg) {\n      _speaking = false;\n      LogHelper.error('TTS Error: $msg', tag: 'TTS');\n    });\n    LogHelper.info('FlutterTts adapter initialized', tag: 'TTS');\n  }\n\n  @override\n  Future<void> speak(String text) async {\n    if (text.trim().isEmpty) return;\n    await _flutterTts.speak(text);\n  }\n\n  @override\n  Future<void> stop() async {\n    await _flutterTts.stop();\n    _speaking = false;\n  }\n\n  @override\n  Future<void> pause() async {\n    await _flutterTts.pause();\n    _speaking = false;\n  }\n}\n"
+        },
+        {
+          "path": "lib/core/tts/mock_tts_service_adapter.dart",
+          "content": "import 'package:{{PACKAGE_NAME}}/core/tts/tts_service_port.dart';\nimport 'package:{{PACKAGE_NAME}}/core/utils/log_helper.dart';\n\nclass MockTtsServiceAdapter implements TtsServicePort {\n  bool _isSpeaking = false;\n\n  @override\n  bool get isSpeaking => _isSpeaking;\n\n  @override\n  Future<void> init() async {\n    LogHelper.info('Mock TTS Service initialized (test mode)', tag: 'TTS');\n  }\n\n  @override\n  Future<void> speak(String text) async {\n    _isSpeaking = true;\n    LogHelper.info('Mock TTS speaking: \"$text\"', tag: 'TTS');\n    await Future.delayed(const Duration(milliseconds: 500));\n    _isSpeaking = false;\n  }\n\n  @override\n  Future<void> stop() async {\n    _isSpeaking = false;\n    LogHelper.info('Mock TTS stopped', tag: 'TTS');\n  }\n\n  @override\n  Future<void> pause() async {\n    _isSpeaking = false;\n  }\n}\n"
+        },
+        {
+          "path": "lib/core/tts/tts_service_port.dart",
+          "content": "abstract interface class TtsServicePort {\n  Future<void> init();\n  Future<void> speak(String text);\n  Future<void> stop();\n  Future<void> pause();\n  bool get isSpeaking;\n}\n"
+        }
+      ],
+      "instructions": [],
+      "contentHash": "sha256:682b59fd6f014dc17fc5dc0dbfe3807038a49cdaec6cfea504cf391de7c60018"
+    },
+    {
+      "path": "stacks/dart/mobile-flutter/recipes/monetization/admob-monetization",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "admob-monetization",
+        "name": "Google AdMob Mobile Ads & Consent",
+        "version": "1.0.0",
+        "language": "dart",
+        "stack": "mobile-flutter",
+        "category": "monetization",
+        "standardType": "monetization-ads",
+        "interfacePort": "AdServicePort",
+        "order": 40,
+        "tags": [
+          "ads",
+          "admob",
+          "monetization",
+          "interstitial",
+          "banner"
+        ],
+        "platformPermissions": [
+          "INTERNET",
+          "ACCESS_NETWORK_STATE"
+        ],
+        "dependsOn": [
+          "core-foundation"
+        ],
+        "parameters": [
+          {
+            "key": "ADMOB_APP_ID_ANDROID",
+            "label": "AdMob Android App ID",
+            "description": "App ID from Google AdMob Console",
+            "default": "ca-app-pub-3940256099942544~3347511713",
+            "secret": false
+          },
+          {
+            "key": "ADMOB_APP_ID_IOS",
+            "label": "AdMob iOS App ID",
+            "description": "App ID from Google AdMob Console",
+            "default": "ca-app-pub-3940256099942544~1458602516",
+            "secret": false
+          },
+          {
+            "key": "ADMOB_INTERSTITIAL_UNIT_ID",
+            "label": "Interstitial Ad Unit ID",
+            "description": "Unit ID for full-screen interstitial ads",
+            "default": "ca-app-pub-3940256099942544/1033173712",
+            "secret": false
+          }
+        ],
+        "packages": [
+          {
+            "name": "google_mobile_ads",
+            "version": "^5.1.0",
+            "dev": false
+          }
+        ],
+        "verify": [
+          "flutter analyze"
+        ]
+      },
+      "description": "Google AdMob mobile banner, interstitial ads, and Google UMP user consent workflow.",
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "lib/core/ads/ad_service_port.dart",
+          "content": "abstract interface class AdServicePort {\n  Future<void> initialize();\n  Future<bool> showInterstitialAd();\n  bool get isInitialized;\n}\n"
+        },
+        {
+          "path": "lib/core/ads/admob_service_adapter.dart",
+          "content": "import 'package:google_mobile_ads/google_mobile_ads.dart';\nimport 'package:{{PACKAGE_NAME}}/core/ads/ad_service_port.dart';\nimport 'package:{{PACKAGE_NAME}}/core/utils/log_helper.dart';\n\nclass AdMobServiceAdapter implements AdServicePort {\n  bool _initialized = false;\n  InterstitialAd? _interstitialAd;\n\n  @override\n  bool get isInitialized => _initialized;\n\n  @override\n  Future<void> initialize() async {\n    try {\n      await MobileAds.instance.initialize();\n      _initialized = true;\n      LogHelper.info('Google AdMob SDK initialized', tag: 'ADS');\n      _loadInterstitialAd();\n    } catch (e, st) {\n      LogHelper.error('AdMob initialization error', error: e, stackTrace: st, tag: 'ADS');\n    }\n  }\n\n  void _loadInterstitialAd() {\n    InterstitialAd.load(\n      adUnitId: '{{ADMOB_INTERSTITIAL_UNIT_ID}}',\n      request: const AdRequest(),\n      adLoadCallback: InterstitialAdLoadCallback(\n        onAdLoaded: (ad) => _interstitialAd = ad,\n        onAdFailedToLoad: (error) {\n          LogHelper.warning('Interstitial ad failed to load: ${error.message}', tag: 'ADS');\n          _interstitialAd = null;\n        },\n      ),\n    );\n  }\n\n  @override\n  Future<bool> showInterstitialAd() async {\n    if (_interstitialAd == null) {\n      LogHelper.warning('Interstitial ad not ready, reloading', tag: 'ADS');\n      _loadInterstitialAd();\n      return false;\n    }\n\n    _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(\n      onAdDismissedFullScreenContent: (ad) {\n        ad.dispose();\n        _loadInterstitialAd();\n      },\n      onAdFailedToShowFullScreenContent: (ad, error) {\n        ad.dispose();\n        _loadInterstitialAd();\n      },\n    );\n\n    await _interstitialAd!.show();\n    return true;\n  }\n}\n"
+        },
+        {
+          "path": "lib/core/ads/mock_ad_service_adapter.dart",
+          "content": "import 'package:{{PACKAGE_NAME}}/core/ads/ad_service_port.dart';\nimport 'package:{{PACKAGE_NAME}}/core/utils/log_helper.dart';\n\nclass MockAdServiceAdapter implements AdServicePort {\n  bool _initialized = false;\n\n  @override\n  bool get isInitialized => _initialized;\n\n  @override\n  Future<void> initialize() async {\n    _initialized = true;\n    LogHelper.info('Mock Ad Service initialized (test mode)', tag: 'ADS');\n  }\n\n  @override\n  Future<bool> showInterstitialAd() async {\n    LogHelper.info('Mock Interstitial Ad presented successfully', tag: 'ADS');\n    return true;\n  }\n}\n"
+        }
+      ],
+      "instructions": [
+        {
+          "target": "android/app/src/main/AndroidManifest.xml",
+          "instruction": "Inside the <application> element of android/app/src/main/AndroidManifest.xml, add: <meta-data android:name=\"com.google.android.gms.ads.APPLICATION_ID\" android:value=\"{{ADMOB_APP_ID_ANDROID}}\"/>"
+        },
+        {
+          "target": "lib/main.dart",
+          "instruction": "In lib/main.dart: 1. Import package:{{PACKAGE_NAME}}/core/ads/admob_service_adapter.dart. 2. Call await AdMobServiceAdapter().initialize() inside main() before runApp()."
+        }
+      ],
+      "contentHash": "sha256:1d86b493936bf9860b6ab922a2d75307719a0c7f723a7a6036021f5c230ee60b"
+    },
+    {
+      "path": "stacks/dart/mobile-flutter/recipes/networking/rest-network-client",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "rest-network-client",
+        "name": "Standard REST Network Client (Dio + Interceptors)",
+        "version": "1.0.0",
+        "language": "dart",
+        "stack": "mobile-flutter",
+        "category": "networking",
+        "standardType": "networking-rest",
+        "interfacePort": "HttpClientPort",
+        "order": 30,
+        "tags": [
+          "http",
+          "dio",
+          "rest",
+          "api",
+          "networking"
+        ],
+        "platformPermissions": [
+          "INTERNET"
+        ],
+        "dependsOn": [
+          "core-foundation"
+        ],
+        "parameters": [
+          {
+            "key": "API_BASE_URL",
+            "label": "API Base URL",
+            "description": "Default base endpoint for HTTP requests",
+            "default": "https://api.example.com/v1",
+            "secret": false
+          },
+          {
+            "key": "API_TIMEOUT_SECONDS",
+            "label": "Connection Timeout (Seconds)",
+            "description": "Connection and receive timeout in seconds",
+            "default": "30",
+            "secret": false
+          }
+        ],
+        "packages": [
+          {
+            "name": "dio",
+            "version": "^5.7.0",
+            "dev": false
+          }
+        ],
+        "verify": [
+          "flutter analyze"
+        ]
+      },
+      "description": "Robust Dio HTTP client with automatic logging interceptors, timeout controls, and Result<T> failure wrapping.",
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "lib/core/network/api_client.dart",
+          "content": "import 'package:dio/dio.dart';\nimport 'package:{{PACKAGE_NAME}}/core/errors/failures.dart';\nimport 'package:{{PACKAGE_NAME}}/core/network/result.dart';\nimport 'package:{{PACKAGE_NAME}}/core/utils/log_helper.dart';\n\nclass ApiClient {\n  final Dio dio;\n\n  ApiClient({Dio? customDio})\n      : dio = customDio ??\n            Dio(\n              BaseOptions(\n                baseUrl: '{{API_BASE_URL}}',\n                connectTimeout: const Duration(seconds: {{API_TIMEOUT_SECONDS}}),\n                receiveTimeout: const Duration(seconds: {{API_TIMEOUT_SECONDS}}),\n                headers: {\n                  'Content-Type': 'application/json',\n                  'Accept': 'application/json',\n                },\n              ),\n            ) {\n    dio.interceptors.add(\n      InterceptorsWrapper(\n        onRequest: (options, handler) {\n          LogHelper.debug('--> ${options.method} ${options.uri}', tag: 'HTTP');\n          return handler.next(options);\n        },\n        onResponse: (response, handler) {\n          LogHelper.debug('<-- ${response.statusCode} ${response.requestOptions.uri}', tag: 'HTTP');\n          return handler.next(response);\n        },\n        onError: (DioException error, handler) {\n          LogHelper.error('HTTP Error: ${error.message}', error: error, tag: 'HTTP');\n          return handler.next(error);\n        },\n      ),\n    );\n  }\n\n  Future<Result<T>> get<T>(\n    String path, {\n    Map<String, dynamic>? queryParameters,\n    required T Function(dynamic data) parser,\n  }) async {\n    try {\n      final response = await dio.get(path, queryParameters: queryParameters);\n      return Result.success(parser(response.data));\n    } on DioException catch (e) {\n      return Result.failure(ServerFailure(e.message ?? 'Network error', code: e.response?.statusCode.toString(), cause: e));\n    } catch (e) {\n      return Result.failure(UnexpectedFailure('Failed to parse response', e));\n    }\n  }\n\n  Future<Result<T>> post<T>(\n    String path, {\n    dynamic data,\n    required T Function(dynamic data) parser,\n  }) async {\n    try {\n      final response = await dio.post(path, data: data);\n      return Result.success(parser(response.data));\n    } on DioException catch (e) {\n      return Result.failure(ServerFailure(e.message ?? 'Network error', code: e.response?.statusCode.toString(), cause: e));\n    } catch (e) {\n      return Result.failure(UnexpectedFailure('Failed to parse response', e));\n    }\n  }\n}\n"
+        }
+      ],
+      "instructions": [],
+      "contentHash": "sha256:69c9e4085e3a33b876c948e7eb3431193dd24809fae48b3ec4ec45902276423e"
+    },
+    {
+      "path": "stacks/dart/mobile-flutter/recipes/storage/key-value-storage",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "key-value-storage",
+        "name": "Persistent Key-Value Storage (SharedPreferences Adapter)",
+        "version": "1.0.1",
+        "language": "dart",
+        "stack": "mobile-flutter",
+        "category": "storage",
+        "standardType": "key-value-storage",
+        "interfacePort": "StorageServicePort",
+        "order": 25,
+        "tags": [
+          "storage",
+          "shared-preferences",
+          "cache",
+          "persistence",
+          "key-value"
+        ],
+        "dependsOn": [
+          "core-foundation"
+        ],
+        "parameters": [
+          {
+            "key": "STORAGE_KEY_PREFIX",
+            "label": "Storage Key Prefix",
+            "description": "Prefix added to keys to prevent namespace collision",
+            "default": "app_",
+            "secret": false
+          }
+        ],
+        "packages": [
+          {
+            "name": "shared_preferences",
+            "version": "^2.3.2",
+            "dev": false
+          }
+        ],
+        "verify": [
+          "flutter analyze"
+        ]
+      },
+      "description": "Cross-platform persistent key-value caching and preference store using SharedPreferences Port-Adapter.",
+      "changelog": [
+        {
+          "version": "1.0.1",
+          "notes": [
+            "The instruction for `lib/main.dart` names the import of `SharedPreferencesStorageService`; without it the call did not compile."
+          ]
+        },
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "lib/core/storage/storage_service_port.dart",
+          "content": "abstract interface class StorageServicePort {\n  Future<void> init();\n  Future<bool> setString(String key, String value);\n  String? getString(String key);\n  Future<bool> setBool(String key, bool value);\n  bool? getBool(String key);\n  Future<bool> setInt(String key, int value);\n  int? getInt(String key);\n  Future<bool> remove(String key);\n  Future<bool> clear();\n}\n"
+        },
+        {
+          "path": "lib/shared/services/mock_storage_service.dart",
+          "content": "import 'package:{{PACKAGE_NAME}}/core/storage/storage_service_port.dart';\n\nclass MockStorageService implements StorageServicePort {\n  final Map<String, dynamic> _memory = {};\n\n  @override\n  Future<void> init() async {}\n\n  @override\n  Future<bool> setString(String key, String value) async {\n    _memory[key] = value;\n    return true;\n  }\n\n  @override\n  String? getString(String key) => _memory[key] as String?;\n\n  @override\n  Future<bool> setBool(String key, bool value) async {\n    _memory[key] = value;\n    return true;\n  }\n\n  @override\n  bool? getBool(String key) => _memory[key] as bool?;\n\n  @override\n  Future<bool> setInt(String key, int value) async {\n    _memory[key] = value;\n    return true;\n  }\n\n  @override\n  int? getInt(String key) => _memory[key] as int?;\n\n  @override\n  Future<bool> remove(String key) async {\n    _memory.remove(key);\n    return true;\n  }\n\n  @override\n  Future<bool> clear() async {\n    _memory.clear();\n    return true;\n  }\n}\n"
+        },
+        {
+          "path": "lib/shared/services/shared_preferences_storage_service.dart",
+          "content": "import 'package:shared_preferences/shared_preferences.dart';\nimport 'package:{{PACKAGE_NAME}}/core/storage/storage_service_port.dart';\nimport 'package:{{PACKAGE_NAME}}/core/utils/log_helper.dart';\n\nclass SharedPreferencesStorageService implements StorageServicePort {\n  SharedPreferences? _prefs;\n  final String _prefix = '{{STORAGE_KEY_PREFIX}}';\n\n  @override\n  Future<void> init() async {\n    _prefs = await SharedPreferences.getInstance();\n    LogHelper.info('SharedPreferences storage initialized', tag: 'STORAGE');\n  }\n\n  String _prefixed(String key) => '$_prefix$key';\n\n  @override\n  Future<bool> setString(String key, String value) async {\n    final prefs = _prefs ?? await SharedPreferences.getInstance();\n    return prefs.setString(_prefixed(key), value);\n  }\n\n  @override\n  String? getString(String key) {\n    return _prefs?.getString(_prefixed(key));\n  }\n\n  @override\n  Future<bool> setBool(String key, bool value) async {\n    final prefs = _prefs ?? await SharedPreferences.getInstance();\n    return prefs.setBool(_prefixed(key), value);\n  }\n\n  @override\n  bool? getBool(String key) {\n    return _prefs?.getBool(_prefixed(key));\n  }\n\n  @override\n  Future<bool> setInt(String key, int value) async {\n    final prefs = _prefs ?? await SharedPreferences.getInstance();\n    return prefs.setInt(_prefixed(key), value);\n  }\n\n  @override\n  int? getInt(String key) {\n    return _prefs?.getInt(_prefixed(key));\n  }\n\n  @override\n  Future<bool> remove(String key) async {\n    final prefs = _prefs ?? await SharedPreferences.getInstance();\n    return prefs.remove(_prefixed(key));\n  }\n\n  @override\n  Future<bool> clear() async {\n    final prefs = _prefs ?? await SharedPreferences.getInstance();\n    return prefs.clear();\n  }\n}\n"
+        }
+      ],
+      "instructions": [
+        {
+          "target": "lib/main.dart",
+          "instruction": "Add `import 'package:{{PACKAGE_NAME}}/shared/services/shared_preferences_storage_service.dart';` with the other imports. In `main()`, add `WidgetsFlutterBinding.ensureInitialized();` and `SharedPreferencesStorageService().init();` before `runApp(...)`."
+        }
+      ],
+      "contentHash": "sha256:0e7e241d08d1c95eb30d0bbe3fe16cfc4eec54864ea86c0f4fa862f51dfaa85a"
+    },
+    {
+      "path": "stacks/dart/mobile-flutter/recipes/ui/app-theming",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "app-theming",
+        "name": "Material 3 Adaptive Theme System",
+        "version": "1.0.1",
+        "language": "dart",
+        "stack": "mobile-flutter",
+        "category": "ui",
+        "standardType": "custom",
+        "interfacePort": "ThemePort",
+        "order": 15,
+        "tags": [
+          "theming",
+          "material-3",
+          "colors",
+          "dark-mode",
+          "ui"
+        ],
+        "dependsOn": [
+          "core-foundation"
+        ],
+        "parameters": [
+          {
+            "key": "PRIMARY_COLOR_HEX",
+            "label": "Primary Brand Color (Hex)",
+            "description": "Primary seed color for Material 3 ColorScheme",
+            "default": "2563EB",
+            "secret": false
+          }
+        ],
+        "verify": [
+          "flutter analyze"
+        ]
+      },
+      "description": "Material 3 dynamic color scheme, adaptive light/dark mode scaffolding, and typography scales.",
+      "changelog": [
+        {
+          "version": "1.0.1",
+          "notes": [
+            "Uses `CardThemeData`, which `ThemeData.cardTheme` takes since Flutter 3.27; `CardTheme` failed `flutter analyze`."
+          ]
+        },
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "lib/core/theme/app_colors.dart",
+          "content": "import 'package:flutter/material.dart';\n\nclass AppColors {\n  AppColors._();\n\n  static const Color primarySeed = Color(0xFF{{PRIMARY_COLOR_HEX}});\n  static const Color backgroundLight = Color(0xFFF8FAFC);\n  static const Color backgroundDark = Color(0xFF0F172A);\n  static const Color surfaceLight = Colors.white;\n  static const Color surfaceDark = Color(0xFF1E293B);\n  static const Color textPrimaryLight = Color(0xFF0F172A);\n  static const Color textPrimaryDark = Color(0xFFF8FAFC);\n}\n"
+        },
+        {
+          "path": "lib/core/theme/app_theme.dart",
+          "content": "import 'package:flutter/material.dart';\nimport 'package:{{PACKAGE_NAME}}/core/theme/app_colors.dart';\n\nclass AppTheme {\n  AppTheme._();\n\n  static ThemeData get lightTheme {\n    final colorScheme = ColorScheme.fromSeed(\n      seedColor: AppColors.primarySeed,\n      brightness: Brightness.light,\n    );\n\n    return ThemeData(\n      useMaterial3: true,\n      colorScheme: colorScheme,\n      scaffoldBackgroundColor: AppColors.backgroundLight,\n      appBarTheme: AppBarTheme(\n        centerTitle: true,\n        backgroundColor: colorScheme.surface,\n        foregroundColor: colorScheme.onSurface,\n        elevation: 0,\n      ),\n      cardTheme: CardThemeData(\n        elevation: 0,\n        shape: RoundedRectangleBorder(\n          borderRadius: BorderRadius.circular(12),\n          side: BorderSide(color: colorScheme.outlineVariant.withAlpha(80)),\n        ),\n      ),\n    );\n  }\n\n  static ThemeData get darkTheme {\n    final colorScheme = ColorScheme.fromSeed(\n      seedColor: AppColors.primarySeed,\n      brightness: Brightness.dark,\n    );\n\n    return ThemeData(\n      useMaterial3: true,\n      colorScheme: colorScheme,\n      scaffoldBackgroundColor: AppColors.backgroundDark,\n      appBarTheme: AppBarTheme(\n        centerTitle: true,\n        backgroundColor: colorScheme.surface,\n        foregroundColor: colorScheme.onSurface,\n        elevation: 0,\n      ),\n      cardTheme: CardThemeData(\n        elevation: 0,\n        shape: RoundedRectangleBorder(\n          borderRadius: BorderRadius.circular(12),\n          side: BorderSide(color: colorScheme.outlineVariant.withAlpha(80)),\n        ),\n      ),\n    );\n  }\n}\n"
+        }
+      ],
+      "instructions": [
+        {
+          "target": "lib/main.dart",
+          "instruction": "In lib/main.dart: 1. Import package:{{PACKAGE_NAME}}/core/theme/app_theme.dart. 2. In MaterialApp, set theme: AppTheme.lightTheme, darkTheme: AppTheme.darkTheme, themeMode: ThemeMode.system. Preserve existing home widget."
+        }
+      ],
+      "contentHash": "sha256:ae7163ed240151ae3c7a4076882ea968584aa920d7e7c9258f1fd315c8ea96a7"
+    },
+    {
+      "path": "stacks/typescript/backend-node-tsoa/recipes/ai/node-atlas-vector-search",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "node-atlas-vector-search",
+        "name": "Node.js MongoDB Atlas Vector Search & Semantic RAG Extension",
+        "version": "1.0.1",
+        "language": "typescript",
+        "stack": "backend-node-tsoa",
+        "category": "ai",
+        "standardType": "custom",
+        "interfacePort": "IVectorSearchRepository",
+        "order": 60,
+        "tags": [
+          "vector-search",
+          "embeddings",
+          "rag",
+          "mongodb-atlas",
+          "semantic-search"
+        ],
+        "dependsOn": [
+          "node-generic-repository"
+        ],
+        "parameters": [
+          {
+            "key": "DEFAULT_VECTOR_INDEX",
+            "label": "Atlas Vector Search Index Name",
+            "description": "Name of the vector search index configured in MongoDB Atlas",
+            "default": "vector_index",
+            "secret": false
+          },
+          {
+            "key": "DEFAULT_EMBEDDING_PATH",
+            "label": "Embedding Field Path",
+            "description": "Name of the document field storing the float vector",
+            "default": "embedding",
+            "secret": false
+          }
+        ],
+        "verify": [
+          "npm run lint"
+        ]
+      },
+      "description": "Composable extension for BaseMongoRepository adding MongoDB Atlas Vector Search ($vectorSearch), cosine similarity thresholding, tenant-scoped vector filtering, and memory-safe float embedding exclusions.",
+      "changelog": [
+        {
+          "version": "1.0.1",
+          "notes": [
+            "Rules for code written later (file patterns) moved from Instructions to Conventions; they are no longer applied at install."
+          ]
+        },
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "src/core/database/extensions/AtlasVectorSearchHelper.ts",
+          "content": "import { Collection, Document } from 'mongoose';\nimport { VectorSearchOptions, VectorSearchResult } from './VectorSearchModels';\n\nexport class AtlasVectorSearchHelper {\n  public static async search<T>(\n    collection: Collection<Document>,\n    embedding: number[],\n    options: VectorSearchOptions = {},\n    docMapper: (doc: any) => T\n  ): Promise<VectorSearchResult<T>[]> {\n    const indexName = options.indexName || '{{DEFAULT_VECTOR_INDEX}}';\n    const path = options.path || '{{DEFAULT_EMBEDDING_PATH}}';\n    const limit = options.limit || 5;\n    const threshold = options.threshold || 0.80;\n    const numCandidates = limit * (options.numCandidatesMultiplier || 10);\n\n    const pipeline: any[] = [\n      {\n        $vectorSearch: {\n          index: indexName,\n          path: path,\n          queryVector: embedding,\n          numCandidates: numCandidates,\n          limit: limit\n        }\n      },\n      {\n        $project: {\n          [path]: 0,\n          score: { $meta: 'vectorSearchScore' }\n        }\n      }\n    ];\n\n    const matchConditions: any = {\n      score: { $gte: threshold }\n    };\n\n    if (options.tenantId) {\n      matchConditions.tenantId = options.tenantId;\n    }\n\n    pipeline.push({ $match: matchConditions });\n\n    const results = await collection.aggregate(pipeline).toArray();\n    return results.map(doc => ({\n      item: docMapper(doc),\n      score: doc.score\n    }));\n  }\n}\n"
+        },
+        {
+          "path": "src/core/database/extensions/index.ts",
+          "content": "export * from './VectorSearchModels';\nexport * from './AtlasVectorSearchHelper';\n"
+        },
+        {
+          "path": "src/core/database/extensions/VectorSearchModels.ts",
+          "content": "export interface IVectorSearchable {\n  embedding?: number[];\n}\n\nexport interface VectorSearchOptions {\n  indexName?: string;\n  path?: string;\n  limit?: number;\n  threshold?: number;\n  numCandidatesMultiplier?: number;\n  tenantId?: string;\n}\n\nexport interface VectorSearchResult<T> {\n  item: T;\n  score: number;\n}\n"
+        }
+      ],
+      "instructions": [],
+      "conventions": [
+        {
+          "pattern": "src/features/*/infrastructure/repositories/*Repository.ts",
+          "rule": "When adding vector search to a feature repository, implement searchByVector(embedding: number[], options?: VectorSearchOptions) by calling AtlasVectorSearchHelper.search with this.getCollection(). Ensure normal read queries project { embedding: 0 } to prevent multi-megabyte vector payloads from polluting memory."
+        }
+      ],
+      "contentHash": "sha256:403d7b0384f113aaecccbf4bd9c99e981a6cb7324b69cfe2707704a039a788d7"
+    },
+    {
+      "path": "stacks/typescript/backend-node-tsoa/recipes/api/node-base-controller",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "node-base-controller",
+        "name": "Node.js TSOA Base Controller & Envelope Dispatcher",
+        "version": "1.0.1",
+        "language": "typescript",
+        "stack": "backend-node-tsoa",
+        "category": "api",
+        "standardType": "api-controller",
+        "interfacePort": "IBaseController",
+        "order": 70,
+        "tags": [
+          "tsoa",
+          "controller",
+          "presentation",
+          "service-result",
+          "clean-architecture",
+          "openapi"
+        ],
+        "dependsOn": [
+          "node-core-foundation",
+          "node-observability-and-env"
+        ],
+        "packages": [
+          {
+            "name": "tsoa",
+            "version": "^6.2.1",
+            "dev": false
+          }
+        ],
+        "verify": [
+          "npm run lint"
+        ]
+      },
+      "description": "Authoritative TSOA base controller providing authenticated tenant and user context extraction, standardized ServiceResult<T> envelope responses, and strict HTTP status mapping without bypassing OpenAPI/Swagger generation.",
+      "changelog": [
+        {
+          "version": "1.0.1",
+          "notes": [
+            "Rules for code written later (file patterns) moved from Instructions to Conventions; they are no longer applied at install."
+          ]
+        },
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "src/core/presentation/BaseController.ts",
+          "content": "import { Controller } from 'tsoa';\nimport { Request } from 'express';\nimport { ServiceResult, ok, fail } from '../result/ServiceResult';\nimport { AppError, UnauthorizedError, ErrorCode } from '../errors/AppError';\nimport { Logger } from '../logger/Logger';\n\nexport interface AuthenticatedUser {\n  id: string;\n  email: string;\n  role?: string;\n  tenantId?: string;\n  [key: string]: any;\n}\n\nexport interface TenantContext {\n  id: string;\n  name: string;\n  displayName?: string;\n  [key: string]: any;\n}\n\nexport abstract class BaseController extends Controller {\n  public request?: Request;\n\n  /**\n   * Retrieves authenticated tenant context synchronously.\n   * Pre-validated and attached to request.user by expressAuthentication middleware.\n   */\n  protected getTenant(): TenantContext {\n    if (!this.request) {\n      throw new UnauthorizedError('Request context is not initialized');\n    }\n    const user = (this.request as any).user;\n    if (!user || (!user.tenantId && !user.tenant)) {\n      throw new UnauthorizedError('Authenticated tenant context is missing from request');\n    }\n    return user.tenant || { id: user.tenantId, name: user.tenantName || 'Default Tenant' };\n  }\n\n  /**\n   * Retrieves authenticated user context synchronously.\n   */\n  protected getUser(): AuthenticatedUser {\n    if (!this.request) {\n      throw new UnauthorizedError('Request context is not initialized');\n    }\n    const user = (this.request as any).user as AuthenticatedUser;\n    if (!user || !user.id) {\n      throw new UnauthorizedError('Authentication required');\n    }\n    return user;\n  }\n\n  /**\n   * Wraps successful data inside standardized ServiceResult envelope.\n   * Supports optional extensible metadata (e.g. pagination, state versions).\n   */\n  protected successResponse<T>(data: T, meta?: Record<string, any>): ServiceResult<T> {\n    this.setStatus(200);\n    const result = ok(data);\n    if (meta && Object.keys(meta).length > 0) {\n      (result as any).meta = meta;\n    }\n    return result;\n  }\n\n  /**\n   * Sets custom HTTP status and returns failure result.\n   */\n  protected failureResponse<E extends Error>(error: E, statusCode: number = 400): ServiceResult<any, E> {\n    this.setStatus(statusCode);\n    return fail(error);\n  }\n\n  /**\n   * Standardized error logging helper.\n   */\n  protected logControllerError(method: string, error: any): void {\n    Logger.error(`[${this.constructor.name}.${method}] Controller execution failed`, error, {\n      tenantId: (this.request as any)?.user?.tenantId,\n      userId: (this.request as any)?.user?.id\n    });\n  }\n}\n"
+        },
+        {
+          "path": "src/core/presentation/index.ts",
+          "content": "export * from './BaseController';\n"
+        }
+      ],
+      "instructions": [],
+      "conventions": [
+        {
+          "pattern": "src/features/*/presentation/controllers/*Controller.ts",
+          "rule": "Extend BaseController for all feature route controllers. Annotate methods with TSOA decorators (@Route, @Get, @Post, @SuccessResponse) and return this.successResponse(data) directly. Never call res.status().json() directly so that TSOA OpenAPI generator can infer exact response schemas."
+        }
+      ],
+      "contentHash": "sha256:21f2711f9e09e411329a82bf9bab1875693945b834b58cbe69679bf498a37d4f"
+    },
+    {
+      "path": "stacks/typescript/backend-node-tsoa/recipes/api/node-boundary-validation",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "node-boundary-validation",
+        "name": "Node.js Express / TSOA Zod Boundary Defense Middleware",
+        "version": "1.0.0",
+        "language": "typescript",
+        "stack": "backend-node-tsoa",
+        "category": "api",
+        "standardType": "error-handler",
+        "interfacePort": "IZodValidator",
+        "order": 40,
+        "tags": [
+          "zod",
+          "validation",
+          "middleware",
+          "express",
+          "boundary-defense"
+        ],
+        "dependsOn": [
+          "node-core-foundation"
+        ],
+        "packages": [
+          {
+            "name": "zod",
+            "version": "^3.22.4",
+            "dev": false
+          }
+        ],
+        "verify": [
+          "npm run lint"
+        ]
+      },
+      "description": "Express HTTP boundary defense middleware that validates request body, query parameters, and route params using Zod schemas, mapping validation failures directly into standardized ValidationError payloads.",
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "src/core/validation/ZodValidator.ts",
+          "content": "import { Request, Response, NextFunction } from 'express';\nimport { z, ZodError } from 'zod';\nimport { ValidationError } from '../errors/AppError';\n\nexport function validateBody<T>(schema: z.ZodSchema<T>) {\n  return (req: Request, _res: Response, next: NextFunction): void => {\n    try {\n      req.body = schema.parse(req.body);\n      next();\n    } catch (err) {\n      if (err instanceof ZodError) {\n        const formatted = err.errors.map(e => ({\n          path: e.path.join('.'),\n          message: e.message\n        }));\n        next(new ValidationError('Invalid request body payload', formatted));\n      } else {\n        next(err);\n      }\n    }\n  };\n}\n\nexport function validateQuery<T>(schema: z.ZodSchema<T>) {\n  return (req: Request, _res: Response, next: NextFunction): void => {\n    try {\n      req.query = schema.parse(req.query) as any;\n      next();\n    } catch (err) {\n      if (err instanceof ZodError) {\n        const formatted = err.errors.map(e => ({\n          path: e.path.join('.'),\n          message: e.message\n        }));\n        next(new ValidationError('Invalid query parameters', formatted));\n      } else {\n        next(err);\n      }\n    }\n  };\n}\n"
+        }
+      ],
+      "instructions": [],
+      "contentHash": "sha256:140df1d89e33b6e2bb751bd39c0699cdba87ead830227c7903585fe992c35cb0"
+    },
+    {
+      "path": "stacks/typescript/backend-node-tsoa/recipes/api/node-state-version-piggyback",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "node-state-version-piggyback",
+        "name": "Node.js Mobile State Versioning & Response Piggybacking Extension",
+        "version": "1.0.1",
+        "language": "typescript",
+        "stack": "backend-node-tsoa",
+        "category": "api",
+        "standardType": "custom",
+        "interfacePort": "IStateVersionSynchronizer",
+        "order": 75,
+        "tags": [
+          "state-versioning",
+          "piggybacking",
+          "mobile-sync",
+          "bandwidth-optimization",
+          "clean-architecture"
+        ],
+        "dependsOn": [
+          "node-base-controller",
+          "node-async-request-context"
+        ],
+        "verify": [
+          "npm run lint"
+        ]
+      },
+      "description": "Bandwidth and round-trip optimization engine for mobile/SPA APIs. Inspects client state version headers (x-user-data-version, x-user-state-data-version), tracks in-flight domain mutations via RequestContext, and piggybacks stale user/state payloads into response.meta to eliminate extra network polling.",
+      "changelog": [
+        {
+          "version": "1.0.1",
+          "notes": [
+            "Rules for code written later (file patterns) moved from Instructions to Conventions; they are no longer applied at install."
+          ]
+        },
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "src/core/presentation/extensions/index.ts",
+          "content": "export * from './StateVersionModels';\nexport * from './StateVersionSyncHelper';\n"
+        },
+        {
+          "path": "src/core/presentation/extensions/StateVersionModels.ts",
+          "content": "export interface IVersionedEntity {\n  id?: string;\n  dataVersion?: number;\n  DataVersion?: number;\n  [key: string]: any;\n}\n\nexport interface IStateVersionMetadata {\n  user?: IVersionedEntity;\n  userState?: IVersionedEntity;\n  systemData?: any;\n  systemDataVersion?: number;\n  [key: string]: any;\n}\n"
+        },
+        {
+          "path": "src/core/presentation/extensions/StateVersionSyncHelper.ts",
+          "content": "import { Request } from 'express';\nimport { RequestContext } from '../../context/RequestContext';\nimport { IVersionedEntity, IStateVersionMetadata } from './StateVersionModels';\n\nconst UPDATED_USER_KEY = 'state_sync_updated_user';\nconst UPDATED_USER_STATE_KEY = 'state_sync_updated_user_state';\n\nexport class StateVersionSyncHelper {\n  /**\n   * Records updated User entity in RequestContext for automatic response piggybacking.\n   */\n  public static userChanged(newUser: IVersionedEntity): void {\n    RequestContext.set(UPDATED_USER_KEY, newUser);\n  }\n\n  /**\n   * Records updated UserState entity in RequestContext for automatic response piggybacking.\n   */\n  public static userStateChanged(newUserState: IVersionedEntity): void {\n    RequestContext.set(UPDATED_USER_STATE_KEY, newUserState);\n  }\n\n  public static getUpdatedUser(): IVersionedEntity | undefined {\n    return RequestContext.get<IVersionedEntity>(UPDATED_USER_KEY);\n  }\n\n  public static getUpdatedUserState(): IVersionedEntity | undefined {\n    return RequestContext.get<IVersionedEntity>(UPDATED_USER_STATE_KEY);\n  }\n\n  /**\n   * Computes piggyback response metadata by comparing client request headers against server versions.\n   */\n  public static computePiggybackMetadata(req?: Request, tenantInfo?: any): IStateVersionMetadata {\n    const extras: IStateVersionMetadata = {};\n    if (!req) return extras;\n\n    const updatedUser = this.getUpdatedUser();\n    const updatedUserState = this.getUpdatedUserState();\n\n    const baseUser = updatedUser || tenantInfo?.User || tenantInfo?.user;\n    const baseUserState = updatedUserState || tenantInfo?.UserState || tenantInfo?.userState;\n\n    const serverUserVersion = baseUser?.dataVersion ?? baseUser?.DataVersion ?? 1;\n    const serverUserStateVersion = baseUserState?.dataVersion ?? baseUserState?.DataVersion ?? 1;\n\n    const clientUserVersion = parseInt(String(req.headers['x-user-data-version'] || '0'), 10) || 0;\n    const clientUserStateVersion = parseInt(String(req.headers['x-user-state-data-version'] || '0'), 10) || 0;\n\n    // Piggyback updated user if mutated during request OR if client is on an older version\n    if (updatedUser || (baseUser && serverUserVersion > clientUserVersion)) {\n      extras.user = updatedUser ?? baseUser;\n    }\n\n    // Piggyback updated userState if mutated during request OR if client is on an older version\n    if (updatedUserState || (baseUserState && serverUserStateVersion > clientUserStateVersion)) {\n      extras.userState = updatedUserState ?? baseUserState;\n    }\n\n    const customReq = req as any;\n    if (customReq.systemData) {\n      extras.systemData = customReq.systemData;\n    }\n    if (customReq.systemDataVersion) {\n      extras.systemDataVersion = customReq.systemDataVersion;\n    }\n\n    return extras;\n  }\n}\n"
+        }
+      ],
+      "instructions": [],
+      "conventions": [
+        {
+          "pattern": "src/features/*/application/services/*Service.ts",
+          "rule": "Whenever a domain service mutates a user profile, streak, or currency state, call StateVersionSyncHelper.userChanged(updatedUser) or StateVersionSyncHelper.userStateChanged(updatedUserState) to enable zero-roundtrip response piggybacking."
+        },
+        {
+          "pattern": "src/features/*/presentation/controllers/*Controller.ts",
+          "rule": "In controllers, compute piggyback metadata with StateVersionSyncHelper.computePiggybackMetadata(this.request, this.getTenant()) and pass it as the second argument to this.successResponse(result, meta)."
+        }
+      ],
+      "contentHash": "sha256:8a3c43344f7f75c56e1bea224ad0fc6364ed1ff7ace25279980a65528d4e696e"
+    },
+    {
+      "path": "stacks/typescript/backend-node-tsoa/recipes/architecture/node-anti-corruption-layer",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "node-anti-corruption-layer",
+        "name": "Node.js Anti-Corruption Layer (ACL) & Schema Bridge",
+        "version": "1.0.1",
+        "language": "typescript",
+        "stack": "backend-node-tsoa",
+        "category": "architecture",
+        "standardType": "custom",
+        "interfacePort": "IAntiCorruptionLayerMapper",
+        "order": 48,
+        "tags": [
+          "anti-corruption-layer",
+          "acl",
+          "ddd",
+          "clean-architecture",
+          "data-mapper",
+          "schema-bridge"
+        ],
+        "dependsOn": [
+          "node-core-foundation",
+          "node-boundary-validation"
+        ],
+        "verify": [
+          "npm run lint"
+        ]
+      },
+      "description": "Eric Evans Domain-Driven Design Anti-Corruption Layer (ACL). Insulates modern V2 domain entities and use cases from dirty, legacy Mongoose schemas and historical field naming inconsistencies via bidirectional, validated data mappers.",
+      "changelog": [
+        {
+          "version": "1.0.1",
+          "notes": [
+            "Rules for code written later (file patterns) moved from Instructions to Conventions; they are no longer applied at install."
+          ]
+        },
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "src/core/acl/AntiCorruptionLayer.ts",
+          "content": "import { z } from 'zod';\nimport { ValidationError } from '../errors/AppError';\n\nexport interface IAntiCorruptionLayerMapper<TLegacy, TDomain> {\n  toDomain(legacy: TLegacy): TDomain;\n  toDomainList(legacyList: TLegacy[]): TDomain[];\n  toPersistence(domain: Partial<TDomain>): Partial<TLegacy>;\n}\n\n/**\n * Base Anti-Corruption Layer (ACL) Mapper.\n * Translates legacy database schemas into pristine domain entities and vice versa,\n * validating invariants and preventing legacy technical debt from polluting domain logic.\n */\nexport abstract class BaseAclMapper<TLegacy, TDomain> implements IAntiCorruptionLayerMapper<TLegacy, TDomain> {\n  protected readonly domainSchema?: z.ZodSchema<TDomain>;\n\n  constructor(domainSchema?: z.ZodSchema<TDomain>) {\n    this.domainSchema = domainSchema;\n  }\n\n  public abstract mapLegacyToDomain(legacy: TLegacy): TDomain;\n  public abstract mapDomainToLegacy(domain: Partial<TDomain>): Partial<TLegacy>;\n\n  public toDomain(legacy: TLegacy): TDomain {\n    if (!legacy) {\n      throw new ValidationError('Cannot map null or undefined legacy record to domain entity');\n    }\n    const domainEntity = this.mapLegacyToDomain(legacy);\n    if (this.domainSchema) {\n      const parseResult = this.domainSchema.safeParse(domainEntity);\n      if (!parseResult.success) {\n        throw new ValidationError('ACL validation failed for domain entity', parseResult.error.format());\n      }\n    }\n    return domainEntity;\n  }\n\n  public toDomainList(legacyList: TLegacy[]): TDomain[] {\n    if (!Array.isArray(legacyList)) return [];\n    return legacyList.map(item => this.toDomain(item));\n  }\n\n  public toPersistence(domain: Partial<TDomain>): Partial<TLegacy> {\n    if (!domain) return {};\n    return this.mapDomainToLegacy(domain);\n  }\n}\n"
+        },
+        {
+          "path": "src/core/acl/index.ts",
+          "content": "export * from './AntiCorruptionLayer';\n"
+        }
+      ],
+      "instructions": [],
+      "conventions": [
+        {
+          "pattern": "src/features/*/infrastructure/acl/*AclMapper.ts",
+          "rule": "Extend BaseAclMapper to insulate new domain entities from legacy database schema inconsistencies. Never pass raw legacy documents directly to domain use cases or presentation controllers."
+        }
+      ],
+      "contentHash": "sha256:1d427bd94cd3168fc5143b176bc6cdde152647282adb6510d42f580f9e8f538e"
+    },
+    {
+      "path": "stacks/typescript/backend-node-tsoa/recipes/architecture/node-ioc-container",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "node-ioc-container",
+        "name": "Node.js Lightweight Type-Safe IoC Container",
+        "version": "1.1.0",
+        "language": "typescript",
+        "stack": "backend-node-tsoa",
+        "category": "architecture",
+        "standardType": "custom",
+        "interfacePort": "IServiceContainer",
+        "order": 22,
+        "tags": [
+          "ioc",
+          "dependency-injection",
+          "di",
+          "inversion-of-control",
+          "mocking",
+          "testability",
+          "dry-run"
+        ],
+        "dependsOn": [
+          "node-core-foundation"
+        ],
+        "onlyIfMissing": [
+          "src/core/di/registry.ts"
+        ],
+        "verify": [
+          "npm run lint"
+        ]
+      },
+      "description": "Zero-dependency, reflection-free, type-safe Inversion of Control (IoC) and Dependency Injection (DI) container. Supports singleton and transient registrations, factory providers, dry-run mock swapping, and scoped test overrides without decorator boilerplate.",
+      "changelog": [
+        {
+          "version": "1.1.0",
+          "notes": [
+            "Ships `src/core/di/registry.ts` (written only when the project has none) with `registerServices()`; the instruction calls it from `createServer` in `src/server.ts`. Binding ports there is now a convention for later code, because a new project has nothing to bind yet.",
+            "Adds a test of the container."
+          ]
+        },
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "src/core/di/Container.test.ts",
+          "content": "import assert from 'node:assert/strict';\nimport { test } from 'node:test';\nimport { Container } from './Container';\n\ntest('a singleton binding resolves to one instance and an override replaces it', () => {\n  const container = new Container().register('clock', () => ({ now: () => 1 }), { singleton: true });\n  assert.equal(container.resolve('clock'), container.resolve('clock'));\n  const fake = { now: () => 2 };\n  container.override('clock', fake);\n  assert.equal(container.resolve('clock'), fake);\n});\n"
+        },
+        {
+          "path": "src/core/di/Container.ts",
+          "content": "export type ServiceToken<T = any> = string | symbol;\nexport type ServiceFactory<T = any> = (container: Container) => T;\n\nexport interface RegisterOptions {\n  singleton?: boolean;\n}\n\ninterface ServiceBinding<T = any> {\n  factory: ServiceFactory<T>;\n  singleton: boolean;\n  instance?: T;\n}\n\n/**\n * Zero-dependency, type-safe Inversion of Control (IoC) Container.\n * Eliminates the need for 'reflect-metadata' or invasive decorators.\n * Provides clean seam isolation for unit testing, characterization tests, and dry-run mock adapters.\n */\nexport class Container {\n  private bindings = new Map<ServiceToken, ServiceBinding>();\n  private overrides = new Map<ServiceToken, any>();\n\n  /**\n   * Registers a service factory under a token.\n   */\n  public register<T>(token: ServiceToken<T>, factory: ServiceFactory<T>, options: RegisterOptions = {}): this {\n    this.bindings.set(token, {\n      factory,\n      singleton: Boolean(options.singleton)\n    });\n    return this;\n  }\n\n  /**\n   * Resolves an instance of the service bound to the given token.\n   */\n  public resolve<T>(token: ServiceToken<T>): T {\n    // 1. Check for explicit test/dry-run override\n    if (this.overrides.has(token)) {\n      return this.overrides.get(token) as T;\n    }\n\n    const binding = this.bindings.get(token);\n    if (!binding) {\n      throw new Error(`[IoC Container] No binding found for token: ${String(token)}. Did you forget to register it?`);\n    }\n\n    // 2. Handle Singleton caching\n    if (binding.singleton) {\n      if (binding.instance === undefined) {\n        binding.instance = binding.factory(this);\n      }\n      return binding.instance as T;\n    }\n\n    // 3. Transient instance creation\n    return binding.factory(this) as T;\n  }\n\n  /**\n   * Checks whether a token is registered in the container.\n   */\n  public has(token: ServiceToken): boolean {\n    return this.overrides.has(token) || this.bindings.has(token);\n  }\n\n  /**\n   * Overrides a service token with a specific mock or dry-run instance.\n   * Ideal for automated characterization tests and side-effect isolation.\n   */\n  public override<T>(token: ServiceToken<T>, mockInstance: T): this {\n    this.overrides.set(token, mockInstance);\n    return this;\n  }\n\n  /**\n   * Removes all overrides and clears singleton instances.\n   */\n  public reset(): void {\n    this.overrides.clear();\n    for (const binding of this.bindings.values()) {\n      delete binding.instance;\n    }\n  }\n}\n\n/**\n * Global application container instance.\n */\nexport const container = new Container();\n"
+        },
+        {
+          "path": "src/core/di/index.ts",
+          "content": "export * from './Container';\n"
+        },
+        {
+          "path": "src/core/di/registry.ts",
+          "content": "import { container } from './Container';\n\n/**\n * The one place where ports are bound to their adapters, for example\n * `container.register<IPaymentGateway>('IPaymentGateway', () => new StripePaymentGateway(), { singleton: true })`.\n * createServer (src/server.ts) calls it once; tests swap an adapter with container.override(token, mock) instead of\n * adding dry-run flags to business code.\n */\nexport function registerServices(): typeof container {\n  return container;\n}\n"
+        }
+      ],
+      "instructions": [
+        {
+          "target": "src/server.ts",
+          "instruction": "In `createServer`, before any middleware, call `registerServices()` imported from `./core/di/registry`."
+        }
+      ],
+      "conventions": [
+        {
+          "pattern": "src/core/di/registry.ts",
+          "rule": "Bind all repository ports and external gateway adapters (e.g. IPaymentGateway, INotificationGateway) to the container in `registerServices`. Use container.override(token, mockAdapter) in test suites to prevent live side effects without polluting business code with dryRun flags."
+        }
+      ],
+      "contentHash": "sha256:33e2406eefa0eef5637fffd673afac0cd7a42d2cac4a394f0d88b4b03ea74c4d"
+    },
+    {
+      "path": "stacks/typescript/backend-node-tsoa/recipes/architecture/node-strangler-router-facade",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "node-strangler-router-facade",
+        "name": "Node.js Strangler Fig & Branch-by-Abstraction Router Facade",
+        "version": "1.1.0",
+        "language": "typescript",
+        "stack": "backend-node-tsoa",
+        "category": "architecture",
+        "standardType": "custom",
+        "interfacePort": "IStranglerRouterFacade",
+        "order": 35,
+        "tags": [
+          "strangler-fig",
+          "branch-by-abstraction",
+          "refactoring",
+          "feature-flags",
+          "shadow-execution",
+          "zero-downtime"
+        ],
+        "dependsOn": [
+          "node-core-foundation",
+          "node-feature-flags",
+          "node-observability-and-env"
+        ],
+        "verify": [
+          "npm run lint"
+        ]
+      },
+      "description": "Production Strangler Fig and Branch-by-Abstraction router facade. Dynamically routes incoming HTTP requests between legacy monolithic route handlers and modern modular V2 routers via FeatureFlags, supporting optional shadow-mode execution for zero-downtime migrations.",
+      "changelog": [
+        {
+          "version": "1.1.0",
+          "notes": [
+            "The rule targets the stack's `src/server.ts` instead of `server/api.ts`, which projects of this stack do not have.",
+            "It is a convention for later changes, not an install instruction: a new project has no legacy route to wrap."
+          ]
+        },
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "src/core/facade/index.ts",
+          "content": "export * from './StranglerRouter';\n"
+        },
+        {
+          "path": "src/core/facade/StranglerRouter.ts",
+          "content": "import { Request, Response, NextFunction, RequestHandler } from 'express';\nimport { FeatureFlags } from '../config/FeatureFlags';\nimport { Logger } from '../logger/Logger';\n\nexport interface StranglerRouteOptions {\n  flagKey: string;\n  legacyHandler: RequestHandler;\n  modernHandler: RequestHandler;\n  shadowMode?: boolean;\n  routeName?: string;\n}\n\n/**\n * Creates a Branch-by-Abstraction route handler that safely toggles between legacy\n * and modern handlers based on dynamic feature flags.\n */\nexport function createStranglerRoute(options: StranglerRouteOptions): RequestHandler {\n  const routeLabel = options.routeName || options.flagKey;\n\n  return (req: Request, res: Response, next: NextFunction) => {\n    const isModernEnabled = FeatureFlags.isEnabled(options.flagKey);\n\n    if (isModernEnabled) {\n      Logger.debug(`[StranglerRouter] Executing modern V2 handler for '${routeLabel}'`, {\n        flag: options.flagKey,\n        path: req.originalUrl\n      });\n      return options.modernHandler(req, res, next);\n    }\n\n    // Shadow execution mode: run modern handler in background for comparison\n    if (options.shadowMode && process.env.NODE_ENV !== 'production') {\n      executeShadowComparison(req, options.modernHandler, routeLabel);\n    }\n\n    Logger.debug(`[StranglerRouter] Falling back to legacy V1 handler for '${routeLabel}'`, {\n      flag: options.flagKey,\n      path: req.originalUrl\n    });\n    return options.legacyHandler(req, res, next);\n  };\n}\n\n/**\n * Executes modern handler in shadow mode to detect divergence without breaking client requests.\n */\nfunction executeShadowComparison(req: Request, modernHandler: RequestHandler, routeLabel: string): void {\n  setImmediate(async () => {\n    try {\n      const mockRes: any = {\n        statusCode: 200,\n        headers: {},\n        body: null,\n        status(code: number) {\n          this.statusCode = code;\n          return this;\n        },\n        json(data: any) {\n          this.body = data;\n          return this;\n        },\n        setHeader(name: string, value: string) {\n          this.headers[name] = value;\n          return this;\n        }\n      };\n\n      await modernHandler(req, mockRes, () => {});\n      Logger.debug(`[StranglerShadow] Shadow execution passed for '${routeLabel}'`, {\n        shadowStatus: mockRes.statusCode\n      });\n    } catch (shadowErr: any) {\n      Logger.warn(`[StranglerShadow] Shadow execution diverged for '${routeLabel}': ${shadowErr.message}`, {\n        error: shadowErr\n      });\n    }\n  });\n}\n"
+        }
+      ],
+      "instructions": [],
+      "conventions": [
+        {
+          "pattern": "src/server.ts",
+          "rule": "When a legacy route is replaced, mount it through createStranglerRoute({ flagKey: 'USE_V2_<MODULE>', legacyHandler, modernHandler: v2Router }) from `./core/facade` instead of registering either handler directly, so the module can be switched with its feature flag and with zero downtime."
+        }
+      ],
+      "contentHash": "sha256:0932f6fe44d69ef40a0373c52389344fab593c02afe27cfde24d8ed7cdd31cb3"
+    },
+    {
+      "path": "stacks/typescript/backend-node-tsoa/recipes/core/node-async-request-context",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "node-async-request-context",
+        "name": "Node.js Async Request Context & Execution Storage",
+        "version": "1.0.0",
+        "language": "typescript",
+        "stack": "backend-node-tsoa",
+        "category": "core",
+        "standardType": "custom",
+        "interfacePort": "IRequestContext",
+        "order": 25,
+        "tags": [
+          "request-context",
+          "async-local-storage",
+          "parameter-drilling",
+          "correlation-id",
+          "clean-architecture"
+        ],
+        "dependsOn": [
+          "node-core-foundation"
+        ],
+        "verify": [
+          "npm run lint"
+        ]
+      },
+      "description": "Thread-safe, request-scoped execution context utilizing Node.js AsyncLocalStorage (async_hooks) to eliminate parameter drilling for tenantId, correlationId, test flags, and mutable request-scoped state.",
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "src/core/context/index.ts",
+          "content": "export * from './RequestContext';\n"
+        },
+        {
+          "path": "src/core/context/RequestContext.ts",
+          "content": "import { AsyncLocalStorage } from 'async_hooks';\n\nexport interface IRequestState {\n  correlationId?: string;\n  tenantId?: string;\n  userId?: string;\n  isTestLab?: boolean;\n  [key: string]: any;\n}\n\nexport const requestContextStorage = new AsyncLocalStorage<IRequestState>();\n\nexport class RequestContext {\n  public static getStore(): IRequestState | undefined {\n    return requestContextStorage.getStore();\n  }\n\n  public static get<T = any>(key: string): T | undefined {\n    const store = requestContextStorage.getStore();\n    return store ? (store[key] as T) : undefined;\n  }\n\n  public static set<T = any>(key: string, value: T): void {\n    const store = requestContextStorage.getStore();\n    if (store) {\n      store[key] = value;\n    }\n  }\n\n  public static getCorrelationId(): string | undefined {\n    return this.get<string>('correlationId');\n  }\n\n  public static getTenantId(): string | undefined {\n    return this.get<string>('tenantId');\n  }\n\n  public static getUserId(): string | undefined {\n    return this.get<string>('userId');\n  }\n\n  public static isTestLab(): boolean {\n    return Boolean(this.get<boolean>('isTestLab'));\n  }\n}\n"
+        },
+        {
+          "path": "src/core/middleware/ContextMiddleware.ts",
+          "content": "import { Request, Response, NextFunction } from 'express';\nimport { requestContextStorage, IRequestState } from '../context/RequestContext';\n\nexport const contextMiddleware = (req: Request, _res: Response, next: NextFunction) => {\n  const correlationId = (req.headers['x-correlation-id'] as string) || (req.headers['x-request-id'] as string) || `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;\n  const isTestLab = req.headers['x-is-test-lab'] === 'true';\n\n  const initialState: IRequestState = {\n    correlationId,\n    isTestLab\n  };\n\n  return requestContextStorage.run(initialState, () => next());\n};\n"
+        }
+      ],
+      "instructions": [
+        {
+          "target": "src/server.ts",
+          "instruction": "Mount contextMiddleware (from src/core/middleware/ContextMiddleware) at the top of the Express middleware pipeline before routing and TSOA controllers."
+        }
+      ],
+      "contentHash": "sha256:ab1de7a36bd0de4d21a2a4d9a4a9623ddc0b13019437f0a00ee5c71a83dd86e6"
+    },
+    {
+      "path": "stacks/typescript/backend-node-tsoa/recipes/core/node-core-foundation",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "node-core-foundation",
+        "name": "Node.js Core Foundation (AppError & ServiceResult Monad)",
+        "version": "1.0.0",
+        "language": "typescript",
+        "stack": "backend-node-tsoa",
+        "category": "core",
+        "standardType": "error-handler",
+        "interfacePort": "IAppError",
+        "order": 10,
+        "tags": [
+          "errors",
+          "service-result",
+          "clean-code",
+          "railway-programming",
+          "core"
+        ],
+        "verify": [
+          "npm run lint"
+        ]
+      },
+      "description": "Authoritative application error taxonomy hierarchy (AppError, ValidationError, NotFoundError, UnauthorizedError, ConflictError, DatabaseError) and Railway-Oriented ServiceResult<T> monad for predictable, robust domain outcomes.",
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "src/core/errors/AppError.ts",
+          "content": "export enum ErrorCode {\n  VALIDATION_ERROR = 'VALIDATION_ERROR',\n  NOT_FOUND = 'NOT_FOUND',\n  UNAUTHORIZED = 'UNAUTHORIZED',\n  FORBIDDEN = 'FORBIDDEN',\n  CONFLICT = 'CONFLICT',\n  DATABASE_ERROR = 'DATABASE_ERROR',\n  INTEGRATION_ERROR = 'INTEGRATION_ERROR',\n  INTERNAL_ERROR = 'INTERNAL_ERROR'\n}\n\nexport class AppError extends Error {\n  public readonly isAppError = true;\n\n  constructor(\n    public readonly message: string,\n    public readonly code: ErrorCode = ErrorCode.INTERNAL_ERROR,\n    public readonly statusCode: number = 500,\n    public readonly details: any = null\n  ) {\n    super(message);\n    Object.setPrototypeOf(this, new.target.prototype);\n    Error.captureStackTrace(this, this.constructor);\n  }\n\n  public toJSON() {\n    return {\n      name: this.name,\n      message: this.message,\n      code: this.code,\n      statusCode: this.statusCode,\n      details: this.details\n    };\n  }\n}\n\nexport class ValidationError extends AppError {\n  constructor(message: string, details: any = null) {\n    super(message, ErrorCode.VALIDATION_ERROR, 400, details);\n    this.name = 'ValidationError';\n  }\n}\n\nexport class NotFoundError extends AppError {\n  constructor(entityName: string, identifier?: string | number) {\n    const msg = identifier ? `${entityName} with ID '${identifier}' was not found.` : `${entityName} not found.`;\n    super(msg, ErrorCode.NOT_FOUND, 404, { entityName, identifier });\n    this.name = 'NotFoundError';\n  }\n}\n\nexport class UnauthorizedError extends AppError {\n  constructor(message: string = 'Authentication required.') {\n    super(message, ErrorCode.UNAUTHORIZED, 401);\n    this.name = 'UnauthorizedError';\n  }\n}\n\nexport class ForbiddenError extends AppError {\n  constructor(message: string = 'Access denied.') {\n    super(message, ErrorCode.FORBIDDEN, 403);\n    this.name = 'ForbiddenError';\n  }\n}\n\nexport class ConflictError extends AppError {\n  constructor(message: string, details: any = null) {\n    super(message, ErrorCode.CONFLICT, 409, details);\n    this.name = 'ConflictError';\n  }\n}\n\nexport class DatabaseError extends AppError {\n  constructor(message: string, originalError?: any) {\n    super(message, ErrorCode.DATABASE_ERROR, 500, originalError ? { original: String(originalError) } : null);\n    this.name = 'DatabaseError';\n  }\n}\n"
+        },
+        {
+          "path": "src/core/index.ts",
+          "content": "export * from './errors/AppError';\nexport * from './result/ServiceResult';\n"
+        },
+        {
+          "path": "src/core/result/ServiceResult.ts",
+          "content": "import { AppError } from '../errors/AppError';\n\nexport type ServiceResult<T, E extends Error = AppError> = ResultOk<T> | ResultFail<E>;\n\nexport class ResultOk<T> {\n  public readonly isSuccess = true;\n  public readonly isFailure = false;\n\n  constructor(public readonly data: T) {}\n\n  public get dataOrNull(): T {\n    return this.data;\n  }\n\n  public get errorOrNull(): null {\n    return null;\n  }\n\n  public map<U>(fn: (data: T) => U): ServiceResult<U, any> {\n    return new ResultOk(fn(this.data));\n  }\n\n  public flatMap<U, E extends Error>(fn: (data: T) => ServiceResult<U, E>): ServiceResult<U, E> {\n    return fn(this.data);\n  }\n\n  public when<R>(matchers: { success: (data: T) => R; failure: (error: any) => R }): R {\n    return matchers.success(this.data);\n  }\n}\n\nexport class ResultFail<E extends Error = AppError> {\n  public readonly isSuccess = false;\n  public readonly isFailure = true;\n\n  constructor(public readonly error: E) {}\n\n  public get dataOrNull(): null {\n    return null;\n  }\n\n  public get errorOrNull(): E {\n    return this.error;\n  }\n\n  public map<U>(_fn: (data: any) => U): ServiceResult<U, E> {\n    return this as any;\n  }\n\n  public flatMap<U>(_fn: (data: any) => ServiceResult<U, any>): ServiceResult<U, E> {\n    return this as any;\n  }\n\n  public when<R>(matchers: { success: (data: any) => R; failure: (error: E) => R }): R {\n    return matchers.failure(this.error);\n  }\n}\n\nexport function ok<T>(data: T): ResultOk<T> {\n  return new ResultOk(data);\n}\n\nexport function fail<E extends Error>(error: E): ResultFail<E> {\n  return new ResultFail(error);\n}\n"
+        }
+      ],
+      "instructions": [],
+      "contentHash": "sha256:1a5338b1e1bf53d40154a21628046e2e0eaf075018a42169c2702dc518fdd869"
+    },
+    {
+      "path": "stacks/typescript/backend-node-tsoa/recipes/core/node-feature-flags",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "node-feature-flags",
+        "name": "Node.js Feature Flags & Branch-by-Abstraction Engine",
+        "version": "1.0.0",
+        "language": "typescript",
+        "stack": "backend-node-tsoa",
+        "category": "core",
+        "standardType": "remote-config",
+        "interfacePort": "IFeatureFlags",
+        "order": 30,
+        "tags": [
+          "feature-flags",
+          "strangler-pattern",
+          "branch-by-abstraction",
+          "zero-downtime"
+        ],
+        "dependsOn": [
+          "node-core-foundation"
+        ],
+        "verify": [
+          "npm run lint"
+        ]
+      },
+      "description": "Thread-safe runtime feature toggle provider supporting zero-downtime Strangler migrations, dual-run shadow execution, and instant rollback safety without service restarts.",
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "src/core/config/FeatureFlags.ts",
+          "content": "export class FeatureFlags {\n  private static flags: Map<string, boolean> = new Map();\n\n  public static initialize(initialFlags: Record<string, boolean> = {}): void {\n    this.flags = new Map(Object.entries(initialFlags));\n  }\n\n  public static isEnabled(flagName: string): boolean {\n    // If explicitly set in process.env (e.g. FEATURE_USE_V2_AUTH=true), that takes precedence\n    const envKey = `FEATURE_${flagName}`;\n    if (process.env[envKey] !== undefined) {\n      return process.env[envKey] === 'true' || process.env[envKey] === '1';\n    }\n    return this.flags.get(flagName) === true;\n  }\n\n  public static setFlag(flagName: string, enabled: boolean): void {\n    this.flags.set(flagName, enabled);\n  }\n\n  public static getAll(): Record<string, boolean> {\n    const res: Record<string, boolean> = {};\n    this.flags.forEach((value, key) => {\n      res[key] = value;\n    });\n    return res;\n  }\n\n  public static async executeBranch<T>({\n    flagName,\n    modern,\n    legacy,\n    onShadowMismatch\n  }: {\n    flagName: string;\n    modern: () => Promise<T>;\n    legacy: () => Promise<T>;\n    onShadowMismatch?: (legacyRes: any, modernRes: any) => void;\n  }): Promise<T> {\n    const isV2 = this.isEnabled(flagName);\n    const isShadow = this.isEnabled(`SHADOW_${flagName}`);\n\n    if (isShadow) {\n      const [legacyResult, modernResult] = await Promise.allSettled([legacy(), modern()]);\n      if (legacyResult.status !== modernResult.status && onShadowMismatch) {\n        onShadowMismatch(legacyResult, modernResult);\n      }\n      if (legacyResult.status === 'fulfilled') {\n        return legacyResult.value;\n      }\n      throw (legacyResult as PromiseRejectedResult).reason;\n    }\n\n    return isV2 ? modern() : legacy();\n  }\n}\n"
+        }
+      ],
+      "instructions": [],
+      "contentHash": "sha256:edb9ad6a271761160d60a5ffe9efcbfebed08fbeeae12b0b54590064277f6407"
+    },
+    {
+      "path": "stacks/typescript/backend-node-tsoa/recipes/delivery/node-delivery-scripts",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "node-delivery-scripts",
+        "name": "Node Delivery Scripts",
+        "version": "1.0.0",
+        "language": "typescript",
+        "stack": "backend-node-tsoa",
+        "category": "delivery",
+        "standardType": "delivery-scripts",
+        "order": 0,
+        "tags": [
+          "delivery",
+          "scripts"
+        ],
+        "onlyIfMissing": [
+          "scripts/build.sh",
+          "scripts/test.sh"
+        ],
+        "verify": [
+          "bash scripts/build.sh"
+        ]
+      },
+      "description": "Writes scripts/build.sh (npm install, npm run build when the project has one) and scripts/test.sh (npm run test) into the tier folder. The job engine runs them as the tier's build and test checks. Existing scripts are never overwritten.",
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/build.sh",
+          "content": "#!/usr/bin/env bash\n# Build check for this tier. The job engine runs it with this folder as the working directory;\n# exit code 0 means pass. Edit it freely: it belongs to this project.\nset -euo pipefail\ncd \"$(dirname \"$0\")/..\"\nnpm install --include=dev --no-audit --no-fund\nnpm run build --if-present\n"
+        },
+        {
+          "path": "scripts/test.sh",
+          "content": "#!/usr/bin/env bash\n# Test run for this tier. The job engine runs it with this folder as the working directory;\n# exit code 0 means pass. Edit it freely: it belongs to this project.\nset -euo pipefail\ncd \"$(dirname \"$0\")/..\"\nnpm install --include=dev --no-audit --no-fund\nnpm run test\n"
+        }
+      ],
+      "instructions": [],
+      "contentHash": "sha256:6b1a73c646dfb6531fe6049e3088b330c81828e26e42b6fd997bb8df30dcefa8"
+    },
+    {
+      "path": "stacks/typescript/backend-node-tsoa/recipes/observability/node-observability-and-env",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "node-observability-and-env",
+        "name": "Node.js Structured Logger & Validated AppConfig",
+        "version": "1.0.1",
+        "language": "typescript",
+        "stack": "backend-node-tsoa",
+        "category": "observability",
+        "standardType": "logging",
+        "interfacePort": "ILogger",
+        "order": 20,
+        "tags": [
+          "logging",
+          "observability",
+          "app-config",
+          "environment",
+          "fail-fast",
+          "clean-architecture"
+        ],
+        "dependsOn": [
+          "node-core-foundation"
+        ],
+        "parameters": [
+          {
+            "key": "DEFAULT_PORT",
+            "label": "Default Server Port",
+            "description": "Port on which the server listens",
+            "default": "3000",
+            "secret": false
+          }
+        ],
+        "verify": [
+          "npm run lint"
+        ]
+      },
+      "description": "JSON structured logger with contextual tags, correlation ID tracking, and normalized, single-source-of-truth appConfig. Enforces zero process.env usage outside of appConfig.",
+      "changelog": [
+        {
+          "version": "1.0.1",
+          "notes": [
+            "Rules for code written later (file patterns) moved from Instructions to Conventions; they are no longer applied at install."
+          ]
+        },
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "src/core/config/appConfig.ts",
+          "content": "/**\n * Canonical Enterprise Environment Names.\n * Mapped from industry standards across cloud providers (AWS, GCP, Vercel).\n */\nexport type EnvironmentName = 'dev' | 'test' | 'staging' | 'prod' | 'demo';\n\nfunction resolveEnvironmentName(): EnvironmentName {\n  const raw = (process.env.NODE_ENV || '').toLowerCase().trim();\n  switch (raw) {\n    case 'prod':\n    case 'production':\n      return 'prod';\n    case 'staging':\n    case 'stage':\n    case 'preprod':\n    case 'uat':\n      return 'staging';\n    case 'test':\n    case 'testing':\n    case 'ci':\n      return 'test';\n    case 'demo':\n    case 'sandbox':\n      return 'demo';\n    case 'dev':\n    case 'development':\n    default:\n      return 'dev';\n  }\n}\n\nconst envName = resolveEnvironmentName();\n\n/**\n * Single Source of Truth (SSOT) Application Configuration.\n * MANDATE: process.env must NEVER be accessed directly anywhere else in the codebase.\n * NOTE: Do not populate arbitrary speculative sample keys here; only declare real,\n * typed platform parameters and lifecycle flags.\n */\nexport const appConfig = {\n  envName,\n  isDev: envName === 'dev',\n  isTest: envName === 'test',\n  isStaging: envName === 'staging',\n  isProd: envName === 'prod',\n  isDemo: envName === 'demo',\n  isEmulator: process.env.FUNCTIONS_EMULATOR === 'true',\n  isDryRun: process.env.DRY_RUN === 'true' || envName === 'demo',\n  port: parseInt(process.env.PORT || '{{DEFAULT_PORT}}', 10),\n  appUrl: process.env.APP_URL || 'http://localhost:3000'\n} as const;\n\nexport type AppConfig = typeof appConfig;\n"
+        },
+        {
+          "path": "src/core/config/index.ts",
+          "content": "export * from './appConfig';\n"
+        },
+        {
+          "path": "src/core/logger/Logger.ts",
+          "content": "export enum LogLevel {\n  DEBUG = 'DEBUG',\n  INFO = 'INFO',\n  WARN = 'WARN',\n  ERROR = 'ERROR'\n}\n\nexport interface LogContext {\n  correlationId?: string;\n  userId?: string;\n  tenantId?: string;\n  module?: string;\n  [key: string]: any;\n}\n\nexport class Logger {\n  private static currentContext: LogContext = {};\n\n  public static setGlobalContext(ctx: LogContext): void {\n    this.currentContext = { ...this.currentContext, ...ctx };\n  }\n\n  public static debug(message: string, meta?: Record<string, any>): void {\n    this.log(LogLevel.DEBUG, message, meta);\n  }\n\n  public static info(message: string, meta?: Record<string, any>): void {\n    this.log(LogLevel.INFO, message, meta);\n  }\n\n  public static warn(message: string, meta?: Record<string, any>): void {\n    this.log(LogLevel.WARN, message, meta);\n  }\n\n  public static error(message: string, error?: any, meta?: Record<string, any>): void {\n    const errorDetails = error instanceof Error ? {\n      name: error.name,\n      message: error.message,\n      stack: error.stack\n    } : error;\n\n    this.log(LogLevel.ERROR, message, { ...meta, error: errorDetails });\n  }\n\n  private static log(level: LogLevel, message: string, meta?: Record<string, any>): void {\n    const entry = {\n      timestamp: new Date().toISOString(),\n      level,\n      message,\n      context: { ...this.currentContext, ...meta }\n    };\n\n    if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'prod') {\n      process.stdout.write(JSON.stringify(entry) + '\\n');\n    } else {\n      const color = level === LogLevel.ERROR ? '\\x1b[31m' : level === LogLevel.WARN ? '\\x1b[33m' : level === LogLevel.INFO ? '\\x1b[32m' : '\\x1b[36m';\n      const metaStr = meta && Object.keys(meta).length > 0 ? ` ${JSON.stringify(meta)}` : '';\n      process.stdout.write(`${color}[${entry.timestamp}] [${level}]\\x1b[0m ${message}${metaStr}\\n`);\n    }\n  }\n}\n"
+        }
+      ],
+      "instructions": [
+        {
+          "target": "package.json",
+          "instruction": "Configure canonical environment serve scripts: \"serve-dev\": \"NODE_ENV=dev npm run serve\", \"serve-staging\": \"NODE_ENV=staging npm run serve\", \"serve-prod\": \"NODE_ENV=prod npm run serve\"."
+        }
+      ],
+      "conventions": [
+        {
+          "pattern": "src/**/*.ts",
+          "rule": "CRITICAL ARCHITECTURAL MANDATE: Never use 'process.env' directly in controllers, services, or repositories. Import 'appConfig' from 'src/core/config/appConfig'. Do not add arbitrary speculative sample variables to appConfig; only define required, verified configuration keys."
+        }
+      ],
+      "contentHash": "sha256:1dda38f7e0260a1f135c224a8d03f309ac217f8a92d7164260d494ac0f68d5f5"
+    },
+    {
+      "path": "stacks/typescript/backend-node-tsoa/recipes/security/node-firebase-appcheck",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "node-firebase-appcheck",
+        "name": "Node.js Firebase App Check Anti-Abuse & Bot Guard Extension",
+        "version": "1.0.0",
+        "language": "typescript",
+        "stack": "backend-node-tsoa",
+        "category": "security",
+        "standardType": "custom",
+        "interfacePort": "IAppCheckValidator",
+        "order": 45,
+        "tags": [
+          "app-check",
+          "anti-abuse",
+          "device-attestation",
+          "bot-defense",
+          "firebase",
+          "security"
+        ],
+        "dependsOn": [
+          "node-tsoa-security-gateway"
+        ],
+        "packages": [
+          {
+            "name": "firebase-admin",
+            "version": "^12.0.0",
+            "dev": false
+          }
+        ],
+        "verify": [
+          "npm run lint"
+        ]
+      },
+      "description": "Cryptographic device attestation and anti-abuse extension for expressAuthentication. Verifies x-firebase-appcheck tokens (Play Integrity / DeviceCheck) to guarantee requests originate from genuine client app binaries rather than bots or scrapers.",
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "src/core/auth/extensions/AppCheckValidator.ts",
+          "content": "import { Request } from 'express';\nimport * as admin from 'firebase-admin';\nimport { UnauthorizedError } from '../../errors/AppError';\n\nexport class AppCheckValidator {\n  /**\n   * Validates Firebase App Check token from request headers.\n   * Enforces device attestation (Play Integrity / App Attest) to block scrapers.\n   */\n  public static async validateAppCheck(request: Request, appId?: number): Promise<void> {\n    // Allow bypassing in local dev/demo environments if configured\n    if (process.env.APP_CHECK_DISABLED === 'true') {\n      return;\n    }\n\n    const appCheckToken = (request.headers['x-firebase-appcheck'] as string) || (request.headers['X-Firebase-AppCheck'] as string);\n    if (!appCheckToken || !appCheckToken.trim()) {\n      throw new UnauthorizedError('Firebase App Check token is required for device verification');\n    }\n\n    try {\n      if (admin.apps.length === 0) {\n        admin.initializeApp();\n      }\n      const appCheckClaims = await admin.appCheck().verifyToken(appCheckToken);\n      (request as any).appCheck = appCheckClaims;\n    } catch (error: any) {\n      throw new UnauthorizedError(`App Check token verification failed: ${error.message}`);\n    }\n  }\n}\n"
+        },
+        {
+          "path": "src/core/auth/extensions/index.ts",
+          "content": "export * from './AppCheckValidator';\n"
+        }
+      ],
+      "instructions": [
+        {
+          "target": "src/core/auth/expressAuthentication.ts",
+          "instruction": "Import AppCheckValidator and call 'await AppCheckValidator.validateAppCheck(request, appId)' right after Bearer token validation to enforce device integrity."
+        }
+      ],
+      "contentHash": "sha256:50af5fe4b725535eeb60b13f38d57a682dcff4c3b47f64b030c3c648c88dc485"
+    },
+    {
+      "path": "stacks/typescript/backend-node-tsoa/recipes/security/node-hmac-signature-guard",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "node-hmac-signature-guard",
+        "name": "Node.js HMAC Request Body Tamper Guard Extension",
+        "version": "1.1.0",
+        "language": "typescript",
+        "stack": "backend-node-tsoa",
+        "category": "security",
+        "standardType": "custom",
+        "interfacePort": "IHmacSignatureGuard",
+        "order": 46,
+        "tags": [
+          "hmac",
+          "signature-verification",
+          "tamper-protection",
+          "integrity",
+          "security"
+        ],
+        "dependsOn": [
+          "node-tsoa-security-gateway"
+        ],
+        "verify": [
+          "npm run lint"
+        ]
+      },
+      "description": "Cryptographic HMAC-SHA256 signature verification extension for API requests. Guarantees message integrity, replay protection with timestamp freshness windows, and payload tamper defense.\n\nThe shared signing secret is read from the `HMAC_SECRET_KEY` environment variable (or passed as `secretKey`); a request fails when neither is set.",
+      "changelog": [
+        {
+          "version": "1.1.0",
+          "notes": [
+            "The signing secret comes only from `HMAC_SECRET_KEY` (or `secretKey`) at run time; the `HMAC_SECRET_KEY` parameter, which wrote the secret into the source file, is removed.",
+            "Removed the `HMAC_VERIFICATION_DISABLED` switch that skipped verification.",
+            "No `extensions/index.ts`: it replaced the App Check recipe's file of the same name; import the verifier from its own file."
+          ]
+        },
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "src/core/auth/extensions/HmacSignatureVerifier.ts",
+          "content": "import crypto from 'crypto';\nimport { Request } from 'express';\nimport { UnauthorizedError } from '../../errors/AppError';\n\nexport interface HmacVerificationOptions {\n  secretKey?: string;\n  toleranceSeconds?: number;\n}\n\nexport class HmacSignatureVerifier {\n  private static readonly DEFAULT_TOLERANCE_SECONDS = 300; // 5 minutes\n\n  /**\n   * Verifies incoming request HMAC-SHA256 signature and timestamp freshness window.\n   */\n  public static verify(request: Request, options: HmacVerificationOptions = {}): void {\n    const signature = (request.headers['x-signature'] as string) || (request.headers['X-Signature'] as string);\n    const timestamp = (request.headers['x-timestamp'] as string) || (request.headers['X-Timestamp'] as string);\n\n    if (!signature || !timestamp) {\n      throw new UnauthorizedError('HMAC signature and timestamp headers (x-signature, x-timestamp) are required');\n    }\n\n    // 1. Anti-Replay: Check timestamp freshness\n    const reqTime = parseInt(timestamp, 10);\n    const now = Math.floor(Date.now() / 1000);\n    const tolerance = options.toleranceSeconds || this.DEFAULT_TOLERANCE_SECONDS;\n\n    if (isNaN(reqTime) || Math.abs(now - reqTime) > tolerance) {\n      throw new UnauthorizedError('Request signature timestamp expired or out of allowed window');\n    }\n\n    // 2. Compute expected HMAC hash: METHOD + PATH + TIMESTAMP + BODY\n    const secret = options.secretKey || process.env.HMAC_SECRET_KEY;\n    if (!secret) {\n      throw new Error('HMAC_SECRET_KEY is not set: the HMAC signature guard needs the shared signing secret.');\n    }\n    const method = (request.method || 'GET').toUpperCase();\n    const path = request.originalUrl || request.url || '/';\n    const bodyString = request.body ? (typeof request.body === 'string' ? request.body : JSON.stringify(request.body)) : '';\n\n    const payloadToSign = `${method}:${path}:${timestamp}:${bodyString}`;\n    const expectedSignature = crypto\n      .createHmac('sha256', secret)\n      .update(payloadToSign)\n      .digest('hex');\n\n    // 3. Constant-time comparison to prevent timing attacks\n    const sigBuffer = Buffer.from(signature, 'hex');\n    const expectedBuffer = Buffer.from(expectedSignature, 'hex');\n\n    if (sigBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(sigBuffer, expectedBuffer)) {\n      throw new UnauthorizedError('HMAC request signature verification failed: Payload was tampered or invalid secret');\n    }\n  }\n}\n"
+        }
+      ],
+      "instructions": [
+        {
+          "target": "src/core/auth/expressAuthentication.ts",
+          "instruction": "Import HmacSignatureVerifier from './extensions/HmacSignatureVerifier' and invoke 'HmacSignatureVerifier.verify(request)' inside the expressAuthentication hook, before the scheme is resolved, to protect endpoints against tampering and replay attacks."
+        }
+      ],
+      "contentHash": "sha256:749e7592951d960fd8c1badb991ad4a64d218a09235942231c4863984fc0daf2"
+    },
+    {
+      "path": "stacks/typescript/backend-node-tsoa/recipes/security/node-tsoa-security-gateway",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "node-tsoa-security-gateway",
+        "name": "Node.js TSOA Firebase Security Gateway & Multi-Tenant Auth",
+        "version": "1.1.0",
+        "language": "typescript",
+        "stack": "backend-node-tsoa",
+        "category": "security",
+        "standardType": "custom",
+        "interfacePort": "ISecurityGateway",
+        "order": 40,
+        "tags": [
+          "auth",
+          "firebase-auth",
+          "tsoa",
+          "express-authentication",
+          "multi-tenant",
+          "security-gateway"
+        ],
+        "dependsOn": [
+          "node-core-foundation",
+          "node-base-controller"
+        ],
+        "packages": [
+          {
+            "name": "firebase-admin",
+            "version": "^12.0.0",
+            "dev": false
+          }
+        ],
+        "verify": [
+          "npm run lint"
+        ]
+      },
+      "description": "Production TSOA expressAuthentication security gateway. Handles multi-app resolution (x-app-id), Firebase Bearer token verification, Admin RBAC roles from the token's `roles` custom claim, and pre-populates request.user with fully hydrated TenantInfo so controllers remain 100% auth-agnostic.\n\nFirebase Admin uses the application default credentials (`GOOGLE_APPLICATION_CREDENTIALS`, or the platform's service account).",
+      "changelog": [
+        {
+          "version": "1.1.0",
+          "notes": [
+            "Admin endpoints (`admin_rbac`) verify the Firebase token and require its `roles` claim to hold the scopes; any bearer token was accepted as an admin before.",
+            "A tenant is always resolved by the provider set at startup; `TokenTenantInfoProvider` is the shipped one. Without a provider the request fails instead of building a tenant from the token silently.",
+            "Instructions name the scaffold's files (`tsoa.json`, `createServer` in `src/server.ts`).",
+            "Removed the unused `FIREBASE_PROJECT_ID` parameter."
+          ]
+        },
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "src/core/auth/AuthModels.ts",
+          "content": "export interface TenantInfo {\n  id: string;\n  name: string;\n  appId?: number;\n  user?: any;\n  userState?: any;\n  [key: string]: any;\n}\n\nexport interface AdminTokenPayload {\n  id: string;\n  email: string;\n  roles: string[];\n  tenantId?: string;\n}\n\nexport interface DecodedAuthToken {\n  uid: string;\n  email?: string;\n  [key: string]: any;\n}\n"
+        },
+        {
+          "path": "src/core/auth/expressAuthentication.ts",
+          "content": "import { Request } from 'express';\nimport * as admin from 'firebase-admin';\nimport { ForbiddenError, UnauthorizedError } from '../errors/AppError';\nimport { TenantInfo, AdminTokenPayload, DecodedAuthToken } from './AuthModels';\nimport { ITenantInfoProvider } from './ITenantInfoProvider';\n\nlet tenantInfoProviderInstance: ITenantInfoProvider | null = null;\n\nexport function setTenantInfoProvider(provider: ITenantInfoProvider): void {\n  tenantInfoProviderInstance = provider;\n}\n\nfunction bearerToken(request: Request): string {\n  const header = request.headers.authorization;\n  const token = header?.startsWith('Bearer ') ? header.slice('Bearer '.length).trim() : '';\n  if (!token) {\n    throw new UnauthorizedError('Bearer authorization token required');\n  }\n  return token;\n}\n\nasync function verifyFirebaseToken(request: Request): Promise<DecodedAuthToken> {\n  const token = bearerToken(request);\n  try {\n    if (admin.apps.length === 0) {\n      admin.initializeApp();\n    }\n    return await admin.auth().verifyIdToken(token);\n  } catch (error: any) {\n    throw new UnauthorizedError(`Firebase token verification failed: ${error.message}`);\n  }\n}\n\n/** Admin endpoints: a verified Firebase token whose `roles` custom claim holds every required scope ('admin' when none is given). */\nasync function authenticateAdmin(request: Request, scopes?: string[]): Promise<AdminTokenPayload> {\n  const decodedToken = await verifyFirebaseToken(request);\n  const roles: string[] = Array.isArray(decodedToken.roles) ? decodedToken.roles : [];\n  const required = scopes && scopes.length ? scopes : ['admin'];\n  const missing = required.filter((role) => !roles.includes(role));\n  if (missing.length) {\n    throw new ForbiddenError(`Missing admin role(s): ${missing.join(', ')}`);\n  }\n  return { id: decodedToken.uid, email: decodedToken.email ?? '', roles };\n}\n\n/** App users: a verified Firebase token, resolved to its tenant by the provider set at startup. */\nasync function authenticateTenant(request: Request): Promise<TenantInfo> {\n  if (!tenantInfoProviderInstance) {\n    throw new Error('No tenant info provider: call setTenantInfoProvider() in createServer (src/server.ts).');\n  }\n  const appId = Number(request.headers['x-app-id']) || 1;\n  const decodedToken = await verifyFirebaseToken(request);\n  return tenantInfoProviderInstance.initializeTenantInfo(appId, decodedToken);\n}\n\n/**\n * TSOA expressAuthentication hook: `@Security('firebase')` for app users, `@Security('admin_rbac', [roles])` for admins.\n * The resolved identity is attached to request.user, so controllers never read tokens.\n */\nexport async function expressAuthentication(\n  request: Request,\n  securityName: string,\n  scopes?: string[]\n): Promise<TenantInfo | AdminTokenPayload> {\n  let user: TenantInfo | AdminTokenPayload;\n  if (securityName === 'admin_rbac') {\n    user = await authenticateAdmin(request, scopes);\n  } else if (securityName === 'firebase') {\n    user = await authenticateTenant(request);\n  } else {\n    throw new UnauthorizedError(`Unknown authentication scheme: ${securityName}`);\n  }\n  (request as any).user = user;\n  return user;\n}\n"
+        },
+        {
+          "path": "src/core/auth/index.ts",
+          "content": "export * from './AuthModels';\nexport * from './ITenantInfoProvider';\nexport * from './TokenTenantInfoProvider';\nexport * from './expressAuthentication';\n"
+        },
+        {
+          "path": "src/core/auth/ITenantInfoProvider.ts",
+          "content": "import { DecodedAuthToken, TenantInfo } from './AuthModels';\n\nexport interface ITenantInfoProvider {\n  initializeTenantInfo(appId: number, decodedToken: DecodedAuthToken): Promise<TenantInfo>;\n}\n"
+        },
+        {
+          "path": "src/core/auth/TokenTenantInfoProvider.ts",
+          "content": "import { DecodedAuthToken, TenantInfo } from './AuthModels';\nimport { ITenantInfoProvider } from './ITenantInfoProvider';\n\n/** The signed-in Firebase user is the tenant. Replace it with the project's own provider once tenants are stored records. */\nexport class TokenTenantInfoProvider implements ITenantInfoProvider {\n  public async initializeTenantInfo(appId: number, decodedToken: DecodedAuthToken): Promise<TenantInfo> {\n    return {\n      id: decodedToken.uid,\n      name: decodedToken.email ?? decodedToken.uid,\n      appId,\n      user: { id: decodedToken.uid, email: decodedToken.email }\n    };\n  }\n}\n"
+        }
+      ],
+      "instructions": [
+        {
+          "target": "tsoa.json",
+          "instruction": "Add `\"authenticationModule\": \"./src/core/auth/expressAuthentication.ts\"` to the `routes` object, so the generated routes call `expressAuthentication` for every `@Security` decorator."
+        },
+        {
+          "target": "src/server.ts",
+          "instruction": "In `createServer`, before `RegisterRoutes(app)`, call `setTenantInfoProvider(new TokenTenantInfoProvider())`, importing both from `./core/auth`. A project whose tenants are stored records passes its own `ITenantInfoProvider` instead."
+        }
+      ],
+      "contentHash": "sha256:21954b53aa4b7b4813179729425be8ae475c99932cf2d443090a1042b93e89d1"
+    },
+    {
+      "path": "stacks/typescript/backend-node-tsoa/recipes/storage/node-generic-repository",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "node-generic-repository",
+        "name": "Node.js Generic Repository (BaseMongo & TenantMongo Architecture)",
+        "version": "1.0.2",
+        "language": "typescript",
+        "stack": "backend-node-tsoa",
+        "category": "storage",
+        "standardType": "database-repository",
+        "interfacePort": "IGenericRepository",
+        "order": 50,
+        "tags": [
+          "repository-pattern",
+          "mongodb",
+          "multi-tenancy",
+          "clean-architecture",
+          "hexagonal",
+          "soft-delete",
+          "atomic-inc"
+        ],
+        "dependsOn": [
+          "node-core-foundation"
+        ],
+        "parameters": [
+          {
+            "key": "DATABASE_NAME",
+            "label": "MongoDB Database Name",
+            "description": "Target database name for collection binding",
+            "default": "app-db",
+            "secret": false
+          }
+        ],
+        "packages": [
+          {
+            "name": "zod",
+            "version": "^3.22.4",
+            "dev": false
+          },
+          {
+            "name": "mongoose",
+            "version": "^9.7.4",
+            "dev": false
+          }
+        ],
+        "verify": [
+          "npm run lint"
+        ]
+      },
+      "description": "Layered generic repository pattern isolating MongoDB persistence behind clean database-agnostic QueryModels, supporting optional soft-delete (for Reference vs Business entities), atomic increments, partial updates, and multi-tenancy via TenantMongoRepository inheritance.",
+      "changelog": [
+        {
+          "version": "1.0.2",
+          "notes": [
+            "Declares `mongoose`, which the repository imports; without it the project did not compile.",
+            "The collection is typed as the MongoDB driver's collection with string `_id`s, which it is; the mongoose `Collection` type did not compile."
+          ]
+        },
+        {
+          "version": "1.0.1",
+          "notes": [
+            "Rules for code written later (file patterns) moved from Instructions to Conventions; they are no longer applied at install."
+          ]
+        },
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "src/core/database/BaseMongoRepository.ts",
+          "content": "import mongoose from 'mongoose';\nimport { z } from 'zod';\nimport { IEntityBase, EntityStatus } from './EntityBase';\nimport { FindByModel, FilterQuery, PaginationOptions, LookupOptions, WhereFilterOperator } from './QueryModels';\nimport { IGenericRepository } from './IGenericRepository';\nimport { NotFoundError, ValidationError, DatabaseError } from '../errors/AppError';\n\nexport interface RepositoryOptions<T> {\n  softDelete?: boolean;\n  softDeleteField?: string;\n  validator?: z.ZodSchema<T>;\n}\n\n/** A stored document: entities keep their string id in `_id`. */\ntype MongoDoc = mongoose.mongo.Document & { _id: string };\n\nexport class BaseMongoRepository<T extends IEntityBase> implements IGenericRepository<T> {\n  protected readonly collectionName: string;\n  protected readonly options: Required<RepositoryOptions<T>>;\n\n  constructor(collectionName: string, options: RepositoryOptions<T> = {}) {\n    this.collectionName = collectionName;\n    this.options = {\n      softDelete: options.softDelete ?? false,\n      softDeleteField: options.softDeleteField ?? 'status',\n      validator: options.validator as any\n    };\n  }\n\n  protected async getCollection(): Promise<mongoose.mongo.Collection<MongoDoc>> {\n    if (!mongoose.connection.db) {\n      throw new DatabaseError(`MongoDB connection is not established. Cannot access collection '${this.collectionName}'`);\n    }\n    return mongoose.connection.db.collection<MongoDoc>(this.collectionName);\n  }\n\n  protected toMongoDoc(data: any): any {\n    const { id, _id, ...rest } = data;\n    const targetId = id || _id || new mongoose.Types.ObjectId().toHexString();\n    return {\n      _id: targetId,\n      ...rest\n    };\n  }\n\n  protected fromMongoDoc(doc: any): T | null {\n    if (!doc) return null;\n    const { _id, ...rest } = doc;\n    return {\n      id: typeof _id === 'object' && _id !== null ? _id.toString() : String(_id),\n      ...rest\n    } as T;\n  }\n\n  protected applySoftDeleteFilter(filter: any): any {\n    if (this.options.softDelete) {\n      filter[this.options.softDeleteField] = { $ne: EntityStatus.Deleted };\n    }\n    return filter;\n  }\n\n  protected convertOperator(opStr: WhereFilterOperator, value: any): any {\n    switch (opStr) {\n      case '==': return value;\n      case '!=': return { $ne: value };\n      case '>': return { $gt: value };\n      case '>=': return { $gte: value };\n      case '<': return { $lt: value };\n      case '<=': return { $lte: value };\n      case 'in': return { $in: value };\n      case 'not-in': return { $nin: value };\n      case 'array-contains': return { $elemMatch: { $eq: value } };\n      case 'regex': return { $regex: value, $options: 'i' };\n      case 'exists': return { $exists: true };\n      case 'not-exists': return { $exists: false };\n      default: return value;\n    }\n  }\n\n  protected validate(data: any): void {\n    if (this.options.validator) {\n      const result = this.options.validator.safeParse(data);\n      if (!result.success) {\n        throw new ValidationError(`Validation failed for '${this.collectionName}'`, result.error.format());\n      }\n    }\n  }\n\n  public async create(data: Partial<T>): Promise<T> {\n    this.validate(data);\n    const collection = await this.getCollection();\n    const now = new Date();\n    const entryObject: any = {\n      ...data,\n      createdAt: now,\n      updatedAt: now,\n      id: data.id || new mongoose.Types.ObjectId().toHexString()\n    };\n\n    if (this.options.softDelete && entryObject[this.options.softDeleteField] === undefined) {\n      entryObject[this.options.softDeleteField] = EntityStatus.Active;\n    }\n\n    const mongoDoc = this.toMongoDoc(entryObject);\n    const res = await collection.insertOne(mongoDoc);\n    if (!res.acknowledged) {\n      throw new DatabaseError(`Failed to insert document into '${this.collectionName}'`);\n    }\n    return this.fromMongoDoc(mongoDoc)!;\n  }\n\n  public async bulkCreate(data: Partial<T>[]): Promise<T[]> {\n    const collection = await this.getCollection();\n    const now = new Date();\n    const entries: T[] = [];\n    const mongoEntries: any[] = [];\n\n    for (const item of data) {\n      this.validate(item);\n      const entryObject: any = {\n        ...item,\n        createdAt: now,\n        updatedAt: now,\n        id: item.id || new mongoose.Types.ObjectId().toHexString()\n      };\n      if (this.options.softDelete && entryObject[this.options.softDeleteField] === undefined) {\n        entryObject[this.options.softDeleteField] = EntityStatus.Active;\n      }\n      mongoEntries.push(this.toMongoDoc(entryObject));\n      entries.push(entryObject as T);\n    }\n\n    if (mongoEntries.length > 0) {\n      const res = await collection.insertMany(mongoEntries);\n      if (!res.acknowledged) {\n        throw new DatabaseError(`Failed to bulk insert into '${this.collectionName}'`);\n      }\n    }\n    return entries;\n  }\n\n  public async get(id: string): Promise<T | null> {\n    const collection = await this.getCollection();\n    const filter: any = { _id: id };\n    this.applySoftDeleteFilter(filter);\n    const doc = await collection.findOne(filter);\n    return this.fromMongoDoc(doc);\n  }\n\n  public async getBy(params: FindByModel[]): Promise<T | null> {\n    const collection = await this.getCollection();\n    const filter: any = {};\n    this.applySoftDeleteFilter(filter);\n    for (const param of params) {\n      const fieldName = param.fieldPath === 'id' ? '_id' : param.fieldPath;\n      filter[fieldName] = this.convertOperator(param.opStr, param.value);\n    }\n    const doc = await collection.findOne(filter);\n    return this.fromMongoDoc(doc);\n  }\n\n  public async list(pagination?: PaginationOptions): Promise<T[]> {\n    const collection = await this.getCollection();\n    const filter: any = {};\n    this.applySoftDeleteFilter(filter);\n    let cursor = collection.find(filter);\n\n    if (pagination?.offset && pagination.offset > 0) cursor = cursor.skip(pagination.offset);\n    if (pagination?.limit && pagination.limit > 0) cursor = cursor.limit(pagination.limit);\n\n    if (pagination?.orderBy) {\n      const dir = pagination.orderDirection === 'asc' ? 1 : -1;\n      cursor = cursor.sort({ [pagination.orderBy]: dir });\n    } else {\n      cursor = cursor.sort({ _id: -1 });\n    }\n\n    const docs = await cursor.toArray();\n    return docs.map(d => this.fromMongoDoc(d)!);\n  }\n\n  public async find(filterQueries: FilterQuery[], pagination?: PaginationOptions): Promise<T[]> {\n    const collection = await this.getCollection();\n    const filter: any = {};\n    this.applySoftDeleteFilter(filter);\n\n    for (const filterQuery of filterQueries) {\n      const conditions = filterQuery.filters.map(param => {\n        const fieldName = param.fieldPath === 'id' ? '_id' : param.fieldPath;\n        return { [fieldName]: this.convertOperator(param.opStr, param.value) };\n      });\n      if (filterQuery.operator === 'AND' && conditions.length > 0) {\n        filter.$and = filter.$and ? [...filter.$and, ...conditions] : conditions;\n      } else if (filterQuery.operator === 'OR' && conditions.length > 0) {\n        filter.$or = filter.$or ? [...filter.$or, ...conditions] : conditions;\n      }\n    }\n\n    let cursor = collection.find(filter);\n    if (pagination?.offset && pagination.offset > 0) cursor = cursor.skip(pagination.offset);\n    if (pagination?.limit && pagination.limit > 0) cursor = cursor.limit(pagination.limit);\n    if (pagination?.orderBy) {\n      const dir = pagination.orderDirection === 'asc' ? 1 : -1;\n      cursor = cursor.sort({ [pagination.orderBy]: dir });\n    } else {\n      cursor = cursor.sort({ _id: -1 });\n    }\n\n    const docs = await cursor.toArray();\n    return docs.map(d => this.fromMongoDoc(d)!);\n  }\n\n  public async findBy(params: FindByModel[], pagination?: PaginationOptions): Promise<T[]> {\n    return this.find([{ operator: 'AND', filters: params }], pagination);\n  }\n\n  public async findByPartial(params: FindByModel[], fields: string[], pagination?: PaginationOptions): Promise<Partial<T>[]> {\n    const collection = await this.getCollection();\n    const filter: any = {};\n    this.applySoftDeleteFilter(filter);\n    for (const param of params) {\n      const fieldName = param.fieldPath === 'id' ? '_id' : param.fieldPath;\n      filter[fieldName] = this.convertOperator(param.opStr, param.value);\n    }\n\n    const projection: Record<string, number> = {};\n    for (const f of fields) {\n      const key = f === 'id' ? '_id' : f;\n      projection[key] = 1;\n    }\n\n    let cursor = collection.find(filter, { projection });\n    if (pagination?.offset && pagination.offset > 0) cursor = cursor.skip(pagination.offset);\n    if (pagination?.limit && pagination.limit > 0) cursor = cursor.limit(pagination.limit);\n    if (pagination?.orderBy) {\n      const dir = pagination.orderDirection === 'asc' ? 1 : -1;\n      cursor = cursor.sort({ [pagination.orderBy]: dir });\n    } else {\n      cursor = cursor.sort({ _id: -1 });\n    }\n\n    const docs = await cursor.toArray();\n    return docs.map(d => this.fromMongoDoc(d) as Partial<T>);\n  }\n\n  public async update(data: T, createIfNonExist: boolean = false): Promise<void> {\n    this.validate(data);\n    const collection = await this.getCollection();\n    const filter: any = { _id: data.id };\n    this.applySoftDeleteFilter(filter);\n\n    const existing = await collection.findOne(filter);\n    if (!existing) {\n      if (!createIfNonExist) {\n        throw new NotFoundError(this.collectionName, data.id);\n      }\n      await this.create(data);\n      return;\n    }\n\n    const { id, _id, ...setFields } = this.toMongoDoc(data);\n    setFields.updatedAt = new Date();\n    const res = await collection.updateOne(filter, { $set: setFields });\n    if (res.matchedCount === 0) {\n      throw new NotFoundError(this.collectionName, data.id);\n    }\n  }\n\n  public async updatePartial(id: string, updates: Partial<T>): Promise<void> {\n    const collection = await this.getCollection();\n    const filter: any = { _id: id };\n    this.applySoftDeleteFilter(filter);\n\n    const rawUpdates = { ...updates } as Record<string, any>;\n    delete rawUpdates.id;\n    delete rawUpdates._id;\n    rawUpdates.updatedAt = new Date();\n\n    const res = await collection.updateOne(filter, { $set: rawUpdates });\n    if (res.matchedCount === 0) {\n      throw new NotFoundError(this.collectionName, id);\n    }\n  }\n\n  public async updateBy(params: FindByModel[], data: Record<string, any>): Promise<number> {\n    const collection = await this.getCollection();\n    const filter: any = {};\n    this.applySoftDeleteFilter(filter);\n    for (const param of params) {\n      const fieldName = param.fieldPath === 'id' ? '_id' : param.fieldPath;\n      filter[fieldName] = this.convertOperator(param.opStr, param.value);\n    }\n    const res = await collection.updateMany(filter, { $set: { ...data, updatedAt: new Date() } });\n    return res.modifiedCount;\n  }\n\n  public async incrementBy(params: FindByModel[] | null, increments: Record<string, number>): Promise<number> {\n    const collection = await this.getCollection();\n    const filter: any = {};\n    this.applySoftDeleteFilter(filter);\n    if (params) {\n      for (const param of params) {\n        const fieldName = param.fieldPath === 'id' ? '_id' : param.fieldPath;\n        filter[fieldName] = this.convertOperator(param.opStr, param.value);\n      }\n    }\n    const res = await collection.updateMany(filter, { $inc: increments });\n    return res.modifiedCount;\n  }\n\n  public async delete(id: string): Promise<T | null> {\n    const collection = await this.getCollection();\n    const filter: any = { _id: id };\n    this.applySoftDeleteFilter(filter);\n\n    const existing = await collection.findOne(filter);\n    if (!existing) {\n      throw new NotFoundError(this.collectionName, id);\n    }\n\n    if (this.options.softDelete) {\n      await collection.updateOne({ _id: id }, {\n        $set: {\n          [this.options.softDeleteField]: EntityStatus.Deleted,\n          deletedAt: new Date()\n        }\n      });\n      return this.fromMongoDoc({ ...existing, [this.options.softDeleteField]: EntityStatus.Deleted });\n    } else {\n      await collection.deleteOne({ _id: id });\n      return this.fromMongoDoc(existing);\n    }\n  }\n\n  public async deleteBy(params: FindByModel[]): Promise<number> {\n    const collection = await this.getCollection();\n    const filter: any = {};\n    for (const param of params) {\n      const fieldName = param.fieldPath === 'id' ? '_id' : param.fieldPath;\n      filter[fieldName] = this.convertOperator(param.opStr, param.value);\n    }\n\n    if (this.options.softDelete) {\n      const res = await collection.updateMany(filter, {\n        $set: {\n          [this.options.softDeleteField]: EntityStatus.Deleted,\n          deletedAt: new Date()\n        }\n      });\n      return res.modifiedCount;\n    } else {\n      const res = await collection.deleteMany(filter);\n      return res.deletedCount;\n    }\n  }\n\n  public async count(params: FindByModel[] = []): Promise<number> {\n    const collection = await this.getCollection();\n    const filter: any = {};\n    this.applySoftDeleteFilter(filter);\n    for (const param of params) {\n      const fieldName = param.fieldPath === 'id' ? '_id' : param.fieldPath;\n      filter[fieldName] = this.convertOperator(param.opStr, param.value);\n    }\n    return collection.countDocuments(filter);\n  }\n\n  public async textSearch(searchTerm: string, offset: number = 0, limit: number = 20): Promise<T[]> {\n    const collection = await this.getCollection();\n    const filter: any = { $text: { $search: searchTerm } };\n    this.applySoftDeleteFilter(filter);\n    let cursor = collection.find(filter).skip(offset);\n    if (limit > 0) cursor = cursor.limit(limit);\n    const docs = await cursor.toArray();\n    return docs.map(d => this.fromMongoDoc(d)!);\n  }\n\n  public async lookup(options: LookupOptions): Promise<any[]> {\n    const collection = await this.getCollection();\n    const matchStage: any = {};\n    this.applySoftDeleteFilter(matchStage);\n\n    if (options.filters && options.filters.length > 0) {\n      for (const filter of options.filters) {\n        const fieldName = filter.fieldPath === 'id' ? '_id' : filter.fieldPath;\n        matchStage[fieldName] = this.convertOperator(filter.opStr, filter.value);\n      }\n    }\n\n    const local = options.localField === 'id' ? '_id' : options.localField;\n    const foreign = options.foreignField === 'id' ? '_id' : options.foreignField;\n\n    const pipeline: any[] = [];\n    if (Object.keys(matchStage).length > 0) pipeline.push({ $match: matchStage });\n    pipeline.push({\n      $lookup: {\n        from: options.foreignCollection,\n        localField: local,\n        foreignField: foreign,\n        as: options.asField\n      }\n    });\n\n    if (options.offset && options.offset > 0) pipeline.push({ $skip: options.offset });\n    if (options.limit && options.limit > 0) pipeline.push({ $limit: options.limit });\n\n    const results = await collection.aggregate(pipeline).toArray();\n    return results.map(doc => this.fromMongoDoc(doc));\n  }\n\n  public async lookupOne(options: LookupOptions): Promise<any[]> {\n    const collection = await this.getCollection();\n    const matchStage: any = {};\n    this.applySoftDeleteFilter(matchStage);\n\n    if (options.filters && options.filters.length > 0) {\n      for (const filter of options.filters) {\n        const fieldName = filter.fieldPath === 'id' ? '_id' : filter.fieldPath;\n        matchStage[fieldName] = this.convertOperator(filter.opStr, filter.value);\n      }\n    }\n\n    const local = options.localField === 'id' ? '_id' : options.localField;\n    const foreign = options.foreignField === 'id' ? '_id' : options.foreignField;\n\n    const pipeline: any[] = [];\n    if (Object.keys(matchStage).length > 0) pipeline.push({ $match: matchStage });\n    pipeline.push({\n      $lookup: {\n        from: options.foreignCollection,\n        localField: local,\n        foreignField: foreign,\n        as: options.asField\n      }\n    });\n    pipeline.push({\n      $unwind: {\n        path: `$${options.asField}`,\n        preserveNullAndEmptyArrays: false\n      }\n    });\n\n    if (options.offset && options.offset > 0) pipeline.push({ $skip: options.offset });\n    if (options.limit && options.limit > 0) pipeline.push({ $limit: options.limit });\n\n    const results = await collection.aggregate(pipeline).toArray();\n    return results.map(doc => this.fromMongoDoc(doc));\n  }\n}\n"
+        },
+        {
+          "path": "src/core/database/EntityBase.ts",
+          "content": "export enum EntityStatus {\n  Active = 1,\n  Deleted = 2,\n  PendingDeletion = 3,\n  Archived = 4\n}\n\nexport interface IEntityBase {\n  id: string;\n  createdAt?: Date;\n  updatedAt?: Date;\n}\n\nexport interface ISoftDeletable {\n  status?: EntityStatus;\n  deletedAt?: Date | null;\n}\n\nexport interface ITenantScoped {\n  tenantId: string;\n}\n\nexport interface TenantInfo {\n  id: string;\n  name: string;\n  displayName?: string;\n  email?: string;\n}\n"
+        },
+        {
+          "path": "src/core/database/IGenericRepository.ts",
+          "content": "import { FindByModel, FilterQuery, PaginationOptions, LookupOptions } from './QueryModels';\n\nexport interface IGenericRepository<T> {\n  create(data: Partial<T>): Promise<T>;\n  bulkCreate(data: Partial<T>[]): Promise<T[]>;\n  get(id: string): Promise<T | null>;\n  getBy(params: FindByModel[]): Promise<T | null>;\n  list(pagination?: PaginationOptions): Promise<T[]>;\n  find(filterQueries: FilterQuery[], pagination?: PaginationOptions): Promise<T[]>;\n  findBy(params: FindByModel[], pagination?: PaginationOptions): Promise<T[]>;\n  findByPartial(params: FindByModel[], fields: string[], pagination?: PaginationOptions): Promise<Partial<T>[]>;\n  update(data: T, createIfNonExist?: boolean): Promise<void>;\n  updatePartial(id: string, updates: Partial<T>): Promise<void>;\n  updateBy(params: FindByModel[], data: Record<string, any>): Promise<number>;\n  incrementBy(params: FindByModel[] | null, increments: Record<string, number>): Promise<number>;\n  delete(id: string): Promise<T | null>;\n  deleteBy(params: FindByModel[]): Promise<number>;\n  count(params?: FindByModel[]): Promise<number>;\n  textSearch(searchTerm: string, offset?: number, limit?: number): Promise<T[]>;\n  lookup(options: LookupOptions): Promise<any[]>;\n  lookupOne(options: LookupOptions): Promise<any[]>;\n}\n"
+        },
+        {
+          "path": "src/core/database/index.ts",
+          "content": "export * from './EntityBase';\nexport * from './QueryModels';\nexport * from './IGenericRepository';\nexport * from './BaseMongoRepository';\nexport * from './TenantMongoRepository';\n"
+        },
+        {
+          "path": "src/core/database/QueryModels.ts",
+          "content": "export type WhereFilterOperator = '<' | '<=' | '==' | '!=' | '>=' | '>' | 'array-contains' | 'in' | 'array-contains-any' | 'not-in' | 'regex' | 'exists' | 'not-exists';\n\nexport class FindByModel {\n  constructor(\n    public readonly fieldPath: string,\n    public readonly opStr: WhereFilterOperator,\n    public readonly value: any\n  ) {}\n}\n\nexport class FilterQuery {\n  constructor(\n    public readonly operator: 'AND' | 'OR',\n    public readonly filters: FindByModel[]\n  ) {}\n}\n\nexport interface PaginationOptions {\n  offset?: number;\n  limit?: number;\n  orderBy?: string;\n  orderDirection?: 'asc' | 'desc';\n}\n\nexport interface LookupOptions {\n  foreignCollection: string;\n  localField: string;\n  foreignField: string;\n  asField: string;\n  filters?: FindByModel[];\n  offset?: number;\n  limit?: number;\n}\n"
+        },
+        {
+          "path": "src/core/database/TenantMongoRepository.ts",
+          "content": "import { IEntityBase, ITenantScoped, TenantInfo } from './EntityBase';\nimport { BaseMongoRepository, RepositoryOptions } from './BaseMongoRepository';\nimport { FindByModel, FilterQuery, PaginationOptions, LookupOptions } from './QueryModels';\nimport { UnauthorizedError } from '../errors/AppError';\n\nexport class TenantMongoRepository<T extends IEntityBase & ITenantScoped> extends BaseMongoRepository<T> {\n  protected readonly tenant: TenantInfo;\n\n  constructor(collectionName: string, tenant: TenantInfo, options: RepositoryOptions<T> = {}) {\n    super(collectionName, options);\n    if (!tenant || !tenant.id) {\n      throw new UnauthorizedError('TenantContext is mandatory for TenantMongoRepository.');\n    }\n    this.tenant = tenant;\n  }\n\n  public get tenantId(): string {\n    return this.tenant.id;\n  }\n\n  protected applyTenantFilter(filter: any): any {\n    filter.tenantId = this.tenant.id;\n    return filter;\n  }\n\n  protected override applySoftDeleteFilter(filter: any): any {\n    super.applySoftDeleteFilter(filter);\n    return this.applyTenantFilter(filter);\n  }\n\n  public override async create(data: Partial<T>): Promise<T> {\n    const tenantData = {\n      ...data,\n      tenantId: this.tenant.id\n    };\n    return super.create(tenantData);\n  }\n\n  public override async bulkCreate(data: Partial<T>[]): Promise<T[]> {\n    const tenantData = data.map(item => ({\n      ...item,\n      tenantId: this.tenant.id\n    }));\n    return super.bulkCreate(tenantData);\n  }\n\n  public override async updatePartial(id: string, updates: Partial<T>): Promise<void> {\n    const cleanUpdates = { ...updates };\n    delete (cleanUpdates as any).tenantId;\n    return super.updatePartial(id, cleanUpdates);\n  }\n\n  public override async lookup(options: LookupOptions): Promise<any[]> {\n    const tenantFilters = [\n      ...(options.filters || []),\n      new FindByModel('tenantId', '==', this.tenant.id)\n    ];\n    return super.lookup({ ...options, filters: tenantFilters });\n  }\n\n  public override async lookupOne(options: LookupOptions): Promise<any[]> {\n    const tenantFilters = [\n      ...(options.filters || []),\n      new FindByModel('tenantId', '==', this.tenant.id)\n    ];\n    return super.lookupOne({ ...options, filters: tenantFilters });\n  }\n}\n"
+        }
+      ],
+      "instructions": [],
+      "conventions": [
+        {
+          "pattern": "src/features/*/infrastructure/repositories/*Repository.ts",
+          "rule": "Extend BaseMongoRepository for global/reference collections (e.g. Country, Currency, SystemConfig with softDelete: false) or TenantMongoRepository for tenant-scoped business entities. Implement domain-specific methods by composing findBy, findByPartial, or incrementBy without leaking Mongoose Document types into domain use cases."
+        }
+      ],
+      "contentHash": "sha256:d7aaf9b81bd6e0ba70f888802d5cc1b86c7122e9f37b56499ba65fcbae9734fb"
+    },
+    {
+      "path": "stacks/typescript/backend-node-tsoa/recipes/testing/node-characterization-test-harness",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "node-characterization-test-harness",
+        "name": "Node.js Characterization & Golden Master Test Harness",
+        "version": "1.0.1",
+        "language": "typescript",
+        "stack": "backend-node-tsoa",
+        "category": "testing",
+        "standardType": "custom",
+        "interfacePort": "ICharacterizationHarness",
+        "order": 95,
+        "tags": [
+          "characterization-testing",
+          "golden-master",
+          "regression-safety",
+          "pii-masking",
+          "dry-run",
+          "supertest"
+        ],
+        "dependsOn": [
+          "node-core-foundation"
+        ],
+        "packages": [
+          {
+            "name": "supertest",
+            "version": "^6.3.3",
+            "dev": true
+          },
+          {
+            "name": "@types/supertest",
+            "version": "^6.0.2",
+            "dev": true
+          }
+        ],
+        "verify": [
+          "npm run lint"
+        ]
+      },
+      "description": "Michael Feathers Golden Master / Characterization Test Harness with PII Redaction and Dry-Run side-effect guards. Enables QA and Coder agents to record deterministic, compliant snapshots of legacy endpoints to verify 100% mathematical parity during Strangler Fig refactoring.",
+      "changelog": [
+        {
+          "version": "1.0.1",
+          "notes": [
+            "Rules for code written later (file patterns) moved from Instructions to Conventions; they are no longer applied at install."
+          ]
+        },
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "src/core/testing/CharacterizationHarness.ts",
+          "content": "import { PiiMasker } from './PiiMasker';\n\nexport interface ComparisonResult {\n  matches: boolean;\n  statusMatch: boolean;\n  differences: string[];\n}\n\nexport interface CharacterizationOptions {\n  ignoredKeys?: string[];\n  maskPii?: boolean;\n  dryRun?: boolean;\n}\n\nexport class CharacterizationHarness {\n  private static defaultIgnoredKeys = new Set([\n    'timestamp',\n    'createdAt',\n    'updatedAt',\n    'correlationId',\n    '_id',\n    'latencyMs'\n  ]);\n\n  /**\n   * Sanitizes object by stripping non-deterministic runtime fields and masking PII.\n   */\n  public static sanitizeObject(obj: any, options: CharacterizationOptions = {}): any {\n    if (obj === null || obj === undefined) return obj;\n    if (typeof obj !== 'object') return obj;\n\n    const ignored = new Set([...this.defaultIgnoredKeys, ...(options.ignoredKeys || [])]);\n\n    if (Array.isArray(obj)) {\n      return obj.map((item) => this.sanitizeObject(item, options));\n    }\n\n    const sanitized: Record<string, any> = {};\n    for (const key of Object.keys(obj)) {\n      if (!ignored.has(key)) {\n        sanitized[key] = this.sanitizeObject(obj[key], options);\n      }\n    }\n\n    // Apply PII masking (default: true for compliance)\n    return options.maskPii !== false ? PiiMasker.maskObject(sanitized) : sanitized;\n  }\n\n  /**\n   * Compares legacy V1 response with modern V2 response and returns precise discrepancy list.\n   */\n  public static compareResponses(\n    legacyRes: { status: number; body: any },\n    modernRes: { status: number; body: any },\n    options: CharacterizationOptions = {}\n  ): ComparisonResult {\n    const differences: string[] = [];\n    const statusMatch = legacyRes.status === modernRes.status;\n\n    if (!statusMatch) {\n      differences.push(`Status mismatch: Expected ${legacyRes.status} (legacy), got ${modernRes.status} (modern)`);\n    }\n\n    const cleanLegacy = this.sanitizeObject(legacyRes.body, options);\n    const cleanModern = this.sanitizeObject(modernRes.body, options);\n\n    const legacyStr = JSON.stringify(cleanLegacy);\n    const modernStr = JSON.stringify(cleanModern);\n\n    if (legacyStr !== modernStr) {\n      differences.push(`Payload mismatch:\\nLegacy: ${legacyStr}\\nModern: ${modernStr}`);\n    }\n\n    return {\n      matches: statusMatch && differences.length === 0,\n      statusMatch,\n      differences\n    };\n  }\n}\n"
+        },
+        {
+          "path": "src/core/testing/index.ts",
+          "content": "export * from './PiiMasker';\nexport * from './CharacterizationHarness';\n"
+        },
+        {
+          "path": "src/core/testing/PiiMasker.ts",
+          "content": "/**\n * Enterprise PII Masker & Data Redaction Engine.\n * Enforces KVKK, GDPR, and PCI-DSS compliance before any test snapshot or log hits disk.\n */\nexport class PiiMasker {\n  private static readonly PAN_REGEX = /\\b(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|6(?:011|5[0-9]{2})[0-9]{12}|(?:2131|1800|35\\d{3})\\d{11})\\b/g;\n  private static readonly IBAN_REGEX = /\\b[A-Z]{2}[0-9]{2}[A-Z0-9]{4}[0-9]{7}([A-Z0-9]?){0,16}\\b/g;\n  private static readonly TCKN_REGEX = /\\b[1-9][0-9]{10}\\b/g;\n  private static readonly EMAIL_REGEX = /\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b/g;\n  private static readonly SENSITIVE_KEY_REGEX = /^(?:password|secret|token|authorization|apiKey|cvv|pin)$/i;\n\n  public static maskString(value: string): string {\n    if (!value || typeof value !== 'string') return value;\n    let masked = value;\n    // Mask Credit Card Numbers (preserve last 4)\n    masked = masked.replace(this.PAN_REGEX, (pan) => `****-****-****-${pan.slice(-4)}`);\n    // Mask IBANs (preserve first 4 and last 4)\n    masked = masked.replace(this.IBAN_REGEX, (iban) => `${iban.slice(0, 4)} **** **** ${iban.slice(-4)}`);\n    // Mask 11-digit National Identity (TCKN)\n    masked = masked.replace(this.TCKN_REGEX, (id) => `${id.slice(0, 3)}*****${id.slice(-2)}`);\n    // Mask Email addresses\n    masked = masked.replace(this.EMAIL_REGEX, (email) => {\n      const [local, domain] = email.split('@');\n      return `${local.charAt(0)}***@${domain}`;\n    });\n    return masked;\n  }\n\n  public static maskObject(obj: any): any {\n    if (obj === null || obj === undefined) return obj;\n    if (typeof obj === 'string') return this.maskString(obj);\n    if (typeof obj !== 'object') return obj;\n\n    if (Array.isArray(obj)) {\n      return obj.map((item) => this.maskObject(item));\n    }\n\n    const result: Record<string, any> = {};\n    for (const [key, value] of Object.entries(obj)) {\n      if (this.SENSITIVE_KEY_REGEX.test(key)) {\n        result[key] = '[REDACTED]';\n      } else if (typeof value === 'string') {\n        result[key] = this.maskString(value);\n      } else {\n        result[key] = this.maskObject(value);\n      }\n    }\n    return result;\n  }\n}\n"
+        }
+      ],
+      "instructions": [],
+      "conventions": [
+        {
+          "pattern": "tests/characterization/*.spec.ts",
+          "rule": "Before refactoring any legacy route, create a characterization test recording its baseline behavior. Always use CharacterizationHarness with PiiMasker enabled. When testing mutation routes, set dryRun: true and override external gateway adapters in the IoC container with mocks."
+        }
+      ],
+      "contentHash": "sha256:91992dbc3012b52f4820c41e7bc0e9ed081917e2dc7ab5bb8af8f8077923618a"
+    },
+    {
+      "path": "stacks/typescript/web-admin-react/recipes/delivery/react-delivery-scripts",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "react-delivery-scripts",
+        "name": "React Delivery Scripts",
+        "version": "1.0.0",
+        "language": "typescript",
+        "stack": "web-admin-react",
+        "category": "delivery",
+        "standardType": "delivery-scripts",
+        "order": 0,
+        "tags": [
+          "delivery",
+          "scripts"
+        ],
+        "onlyIfMissing": [
+          "scripts/build.sh",
+          "scripts/test.sh"
+        ],
+        "verify": [
+          "bash scripts/build.sh"
+        ]
+      },
+      "description": "Writes scripts/build.sh (npm install, npm run build) and scripts/test.sh (npm run test) into the tier folder. The job engine runs them as the tier's build and test checks. Existing scripts are never overwritten.",
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/build.sh",
+          "content": "#!/usr/bin/env bash\n# Build check for this tier. The job engine runs it with this folder as the working directory;\n# exit code 0 means pass. Edit it freely: it belongs to this project.\nset -euo pipefail\ncd \"$(dirname \"$0\")/..\"\nnpm install --include=dev --no-audit --no-fund\nnpm run build\n"
+        },
+        {
+          "path": "scripts/test.sh",
+          "content": "#!/usr/bin/env bash\n# Test run for this tier. The job engine runs it with this folder as the working directory;\n# exit code 0 means pass. Edit it freely: it belongs to this project.\nset -euo pipefail\ncd \"$(dirname \"$0\")/..\"\nnpm install --include=dev --no-audit --no-fund\nnpm run test\n"
+        }
+      ],
+      "instructions": [],
+      "contentHash": "sha256:f6769cbbef4b6cafe3af0f176262c65c5f18a7714f5741ba982d0b8681ae7e81"
+    },
+    {
+      "path": "stacks/typescript/web-admin-react/recipes/networking/web-react-api-client",
+      "meta": {
+        "schemaVersion": 1,
+        "id": "web-react-api-client",
+        "name": "React SPA API Client & ServiceResult Envelope Bridge",
+        "version": "1.0.1",
+        "language": "typescript",
+        "stack": "web-admin-react",
+        "category": "networking",
+        "standardType": "networking-rest",
+        "interfacePort": "IApiClient",
+        "order": 20,
+        "tags": [
+          "api-client",
+          "react",
+          "networking",
+          "service-result",
+          "envelope",
+          "toast-integration"
+        ],
+        "parameters": [
+          {
+            "key": "API_BASE_URL",
+            "label": "API Base URL",
+            "description": "Base URL path prefix for all API calls",
+            "default": "/api",
+            "secret": false
+          }
+        ],
+        "verify": [
+          "npm run lint"
+        ]
+      },
+      "description": "Production TypeScript API client for React SPA portals. Handles ServiceResult<T> unwrapping, correlation ID propagation, centralized toast notifications for AppError codes, and client state-version headers (x-user-data-version).",
+      "changelog": [
+        {
+          "version": "1.0.1",
+          "notes": [
+            "Rules for code written later (file patterns) moved from Instructions to Conventions; they are no longer applied at install.",
+            "Fixed: `npm run lint` failed on eight explicit `any` types in `ApiClient.ts`; they are `unknown` or typed now."
+          ]
+        },
+        {
+          "version": "1.0.0",
+          "notes": [
+            "First version."
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "src/core/api/ApiClient.ts",
+          "content": "export interface ServiceResponseEnvelope<T> {\n  success: boolean;\n  data?: T;\n  meta?: Record<string, unknown>;\n  error?: {\n    code: string;\n    message: string;\n    details?: unknown;\n  };\n}\n\nexport class ApiError extends Error {\n  public readonly code: string;\n  public readonly details?: unknown;\n  public readonly status: number;\n\n  constructor(message: string, code: string = 'API_ERROR', status: number = 400, details?: unknown) {\n    super(message);\n    this.name = 'ApiError';\n    this.code = code;\n    this.status = status;\n    this.details = details;\n  }\n}\n\nexport class ApiClient {\n  private baseUrl: string;\n\n  constructor(baseUrl: string = '{{API_BASE_URL}}') {\n    this.baseUrl = baseUrl.replace(/\\/+$/, '');\n  }\n\n  private getHeaders(): Record<string, string> {\n    const headers: Record<string, string> = {\n      'Content-Type': 'application/json',\n      'x-correlation-id': `web_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`\n    };\n    const token = localStorage.getItem('auth_token');\n    if (token) {\n      headers['Authorization'] = `Bearer ${token}`;\n    }\n    return headers;\n  }\n\n  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {\n    const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;\n    const response = await fetch(url, {\n      ...options,\n      headers: {\n        ...this.getHeaders(),\n        ...(options.headers as Record<string, string> | undefined)\n      }\n    });\n\n    // The body is JSON or empty; an empty or non-JSON body leaves the payload null.\n    const payload = (await response.json().catch(() => null)) as (Partial<ServiceResponseEnvelope<T>> & { message?: string }) | null;\n\n    if (!response.ok) {\n      const errMessage = payload?.error?.message || payload?.message || `HTTP ${response.status} Request Failed`;\n      const errCode = payload?.error?.code || 'HTTP_ERROR';\n      throw new ApiError(errMessage, errCode, response.status, payload?.error?.details);\n    }\n\n    // Handle ServiceResult<T> envelope automatically\n    if (payload && typeof payload === 'object' && 'success' in payload) {\n      if (!payload.success) {\n        throw new ApiError(\n          payload.error?.message || 'Operation failed',\n          payload.error?.code || 'OPERATION_FAILED',\n          response.status,\n          payload.error?.details\n        );\n      }\n      return payload.data as T;\n    }\n\n    return payload as T;\n  }\n\n  public get<T>(endpoint: string): Promise<T> {\n    return this.request<T>(endpoint, { method: 'GET' });\n  }\n\n  public post<T>(endpoint: string, body?: unknown): Promise<T> {\n    return this.request<T>(endpoint, {\n      method: 'POST',\n      body: body !== undefined ? JSON.stringify(body) : undefined\n    });\n  }\n\n  public put<T>(endpoint: string, body?: unknown): Promise<T> {\n    return this.request<T>(endpoint, {\n      method: 'PUT',\n      body: body !== undefined ? JSON.stringify(body) : undefined\n    });\n  }\n\n  public delete<T>(endpoint: string): Promise<T> {\n    return this.request<T>(endpoint, { method: 'DELETE' });\n  }\n}\n\nexport const apiClient = new ApiClient();\n"
+        },
+        {
+          "path": "src/core/api/index.ts",
+          "content": "export * from './ApiClient';\n"
+        }
+      ],
+      "instructions": [],
+      "conventions": [
+        {
+          "pattern": "src/pages/**/*.tsx",
+          "rule": "Use apiClient.get<T> / apiClient.post<T> from 'src/core/api' instead of raw fetch calls to automatically unwrap ServiceResult envelopes and handle errors."
+        }
+      ],
+      "contentHash": "sha256:c7b508412a5bbdb602c81a56e54b06d0f9f4257ba6f896e2510dbd4d78b8b4b5"
+    }
+  ]
+}

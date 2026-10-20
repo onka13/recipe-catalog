@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import * as admin from 'firebase-admin';
-import { UnauthorizedError } from '../errors/AppError';
+import { ForbiddenError, UnauthorizedError } from '../errors/AppError';
 import { TenantInfo, AdminTokenPayload, DecodedAuthToken } from './AuthModels';
 import { ITenantInfoProvider } from './ITenantInfoProvider';
 
@@ -10,78 +10,66 @@ export function setTenantInfoProvider(provider: ITenantInfoProvider): void {
   tenantInfoProviderInstance = provider;
 }
 
+function bearerToken(request: Request): string {
+  const header = request.headers.authorization;
+  const token = header?.startsWith('Bearer ') ? header.slice('Bearer '.length).trim() : '';
+  if (!token) {
+    throw new UnauthorizedError('Bearer authorization token required');
+  }
+  return token;
+}
+
+async function verifyFirebaseToken(request: Request): Promise<DecodedAuthToken> {
+  const token = bearerToken(request);
+  try {
+    if (admin.apps.length === 0) {
+      admin.initializeApp();
+    }
+    return await admin.auth().verifyIdToken(token);
+  } catch (error: any) {
+    throw new UnauthorizedError(`Firebase token verification failed: ${error.message}`);
+  }
+}
+
+/** Admin endpoints: a verified Firebase token whose `roles` custom claim holds every required scope ('admin' when none is given). */
+async function authenticateAdmin(request: Request, scopes?: string[]): Promise<AdminTokenPayload> {
+  const decodedToken = await verifyFirebaseToken(request);
+  const roles: string[] = Array.isArray(decodedToken.roles) ? decodedToken.roles : [];
+  const required = scopes && scopes.length ? scopes : ['admin'];
+  const missing = required.filter((role) => !roles.includes(role));
+  if (missing.length) {
+    throw new ForbiddenError(`Missing admin role(s): ${missing.join(', ')}`);
+  }
+  return { id: decodedToken.uid, email: decodedToken.email ?? '', roles };
+}
+
+/** App users: a verified Firebase token, resolved to its tenant by the provider set at startup. */
+async function authenticateTenant(request: Request): Promise<TenantInfo> {
+  if (!tenantInfoProviderInstance) {
+    throw new Error('No tenant info provider: call setTenantInfoProvider() in createServer (src/server.ts).');
+  }
+  const appId = Number(request.headers['x-app-id']) || 1;
+  const decodedToken = await verifyFirebaseToken(request);
+  return tenantInfoProviderInstance.initializeTenantInfo(appId, decodedToken);
+}
+
 /**
- * TSOA expressAuthentication hook.
- * Validates Firebase ID tokens, resolves multi-tenant app context, and attaches
- * pre-hydrated TenantInfo to request.user.
+ * TSOA expressAuthentication hook: `@Security('firebase')` for app users, `@Security('admin_rbac', [roles])` for admins.
+ * The resolved identity is attached to request.user, so controllers never read tokens.
  */
 export async function expressAuthentication(
   request: Request,
   securityName: string,
   scopes?: string[]
 ): Promise<TenantInfo | AdminTokenPayload> {
+  let user: TenantInfo | AdminTokenPayload;
   if (securityName === 'admin_rbac') {
-    // Admin Portal token handling
-    const authHeader = request.headers['authorization'] || request.headers['Authorization'];
-    if (!authHeader || typeof authHeader !== 'string' || !authHeader.startsWith('Bearer ')) {
-      throw new UnauthorizedError('Admin authorization header required');
-    }
-    const token = authHeader.split('Bearer ')[1].trim();
-    if (!token) {
-      throw new UnauthorizedError('Invalid admin token');
-    }
-    // Default admin payload or delegate to admin verifier
-    const adminPayload: AdminTokenPayload = {
-      id: 'admin_root',
-      email: 'admin@platform.internal',
-      roles: scopes || ['admin']
-    };
-    (request as any).user = adminPayload;
-    return adminPayload;
-  }
-
-  if (securityName !== 'firebase') {
+    user = await authenticateAdmin(request, scopes);
+  } else if (securityName === 'firebase') {
+    user = await authenticateTenant(request);
+  } else {
     throw new UnauthorizedError(`Unknown authentication scheme: ${securityName}`);
   }
-
-  // 1. Resolve Multi-App ID from header
-  const appIdHeader = (request.headers['x-app-id'] as string) || (request.headers['X-App-Id'] as string);
-  const appId = Number(appIdHeader) || 1;
-
-  // 2. Extract Bearer Token
-  const authorization = (request.headers['authorization'] as string) || (request.headers['Authorization'] as string);
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    throw new UnauthorizedError('Bearer authorization token required');
-  }
-  const token = authorization.split('Bearer ')[1]?.trim();
-  if (!token) {
-    throw new UnauthorizedError('Invalid bearer token format');
-  }
-
-  // 3. Verify Firebase ID Token
-  let decodedToken: DecodedAuthToken;
-  try {
-    if (admin.apps.length === 0) {
-      admin.initializeApp();
-    }
-    decodedToken = await admin.auth().verifyIdToken(token);
-  } catch (error: any) {
-    throw new UnauthorizedError(`Firebase token verification failed: ${error.message}`);
-  }
-
-  // 4. Resolve Tenant Context via Port
-  let tenantInfo: TenantInfo;
-  if (tenantInfoProviderInstance) {
-    tenantInfo = await tenantInfoProviderInstance.initializeTenantInfo(appId, decodedToken);
-  } else {
-    tenantInfo = {
-      id: decodedToken.uid,
-      name: decodedToken.email || decodedToken.uid,
-      appId,
-      user: { id: decodedToken.uid, email: decodedToken.email }
-    };
-  }
-
-  (request as any).user = tenantInfo;
-  return tenantInfo;
+  (request as any).user = user;
+  return user;
 }
