@@ -2,7 +2,7 @@
 schemaVersion: 1
 id: aspnetcore-core-foundation
 name: ASP.NET Core Foundation (Problem Details, Typed Settings, Health Checks)
-version: 1.0.0
+version: 1.0.1
 language: csharp
 stack: backend-aspnetcore
 category: core
@@ -16,6 +16,7 @@ tags:
   - health-checks
 verify:
   - dotnet build --nologo
+  - dotnet test --nologo
 ---
 # ASP.NET Core Foundation (Problem Details, Typed Settings, Health Checks)
 
@@ -35,6 +36,9 @@ Add a top-level `"Api": { "ServiceName": "{{PROJECT_NAME}}" }` section.
 Signal an expected failure by throwing one of the `AppException` types from `Api.Core.Errors`; never build error responses by hand in a controller. Settings a service needs go into an options class with data annotations, bound and validated like `ApiOptions`, and are read through `IOptions<T>`.
 
 ## Changelog
+
+### 1.0.1
+- `verify` also runs `dotnet test`, so the two tests the recipe ships are checked when it is applied.
 
 ### 1.0.0
 - First version.

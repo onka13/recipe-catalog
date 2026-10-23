@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "0.1.0",
+  "catalogVersion": "0.1.1",
   "items": [
     {
       "kind": "scaffold",
@@ -327,10 +327,10 @@
     {
       "kind": "recipe",
       "id": "aspnetcore-core-foundation",
-      "version": "1.0.0",
-      "contentHash": "sha256:f7a9461a7b9f81503e244ad3c6bfe8e0f1267c34f99efecb3e252b056e22176a",
+      "version": "1.0.1",
+      "contentHash": "sha256:d8a1425acc2257cba6a06b594a361ab5e5f35ddcf4c2902afa2627b34478aaa4",
       "status": "passed",
-      "checkedAt": "2026-10-20T18:41:38.385Z",
+      "checkedAt": "2026-10-23T19:34:00.247Z",
       "image": "recipe-catalog-toolchain",
       "agent": "claude",
       "steps": [
@@ -351,6 +351,12 @@
         {
           "step": "aspnetcore-core-foundation: verify",
           "command": "dotnet build --nologo",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "aspnetcore-core-foundation: verify",
+          "command": "dotnet test --nologo",
           "status": "passed",
           "exitCode": 0
         },
@@ -891,10 +897,10 @@
     {
       "kind": "recipe",
       "id": "node-ioc-container",
-      "version": "1.1.0",
-      "contentHash": "sha256:33e2406eefa0eef5637fffd673afac0cd7a42d2cac4a394f0d88b4b03ea74c4d",
+      "version": "1.1.1",
+      "contentHash": "sha256:8813ebb4f24518e638dc883c4b6db0781e65e78c984b0d17f99cd385a6d58241",
       "status": "passed",
-      "checkedAt": "2026-10-20T18:44:03.923Z",
+      "checkedAt": "2026-10-23T19:34:46.730Z",
       "image": "recipe-catalog-toolchain",
       "agent": "claude",
       "steps": [
@@ -915,6 +921,12 @@
         {
           "step": "node-ioc-container: verify",
           "command": "npm run lint",
+          "status": "passed",
+          "exitCode": 0
+        },
+        {
+          "step": "node-ioc-container: verify",
+          "command": "npm run test",
           "status": "passed",
           "exitCode": 0
         },
@@ -1361,10 +1373,10 @@
     {
       "kind": "recipe",
       "id": "node-characterization-test-harness",
-      "version": "1.0.1",
-      "contentHash": "sha256:91992dbc3012b52f4820c41e7bc0e9ed081917e2dc7ab5bb8af8f8077923618a",
+      "version": "1.0.2",
+      "contentHash": "sha256:6090db1457447ac31516c308757146ed8516f999997d614c615a1c8b64f7bb53",
       "status": "passed",
-      "checkedAt": "2026-10-20T18:46:18.940Z",
+      "checkedAt": "2026-10-23T19:34:54.267Z",
       "image": "recipe-catalog-toolchain",
       "steps": [
         {

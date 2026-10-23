@@ -2,7 +2,7 @@
 schemaVersion: 1
 id: node-ioc-container
 name: Node.js Lightweight Type-Safe IoC Container
-version: 1.1.0
+version: 1.1.1
 language: typescript
 stack: backend-node-tsoa
 category: architecture
@@ -23,6 +23,7 @@ onlyIfMissing:
   - src/core/di/registry.ts
 verify:
   - npm run lint
+  - npm run test
 ---
 # Node.js Lightweight Type-Safe IoC Container
 
@@ -39,6 +40,9 @@ In `createServer`, before any middleware, call `registerServices()` imported fro
 Bind all repository ports and external gateway adapters (e.g. IPaymentGateway, INotificationGateway) to the container in `registerServices`. Use container.override(token, mockAdapter) in test suites to prevent live side effects without polluting business code with dryRun flags.
 
 ## Changelog
+
+### 1.1.1
+- `verify` also runs `npm run test`, so the container test the recipe ships is checked when it is applied.
 
 ### 1.1.0
 - Ships `src/core/di/registry.ts` (written only when the project has none) with `registerServices()`; the instruction calls it from `createServer` in `src/server.ts`. Binding ports there is now a convention for later code, because a new project has nothing to bind yet.

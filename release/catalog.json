@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "0.1.0",
+  "catalogVersion": "0.1.1",
   "generator": "recipe-catalog 0.1.0",
   "stacks": [
     {
@@ -331,7 +331,7 @@
         "schemaVersion": 1,
         "id": "aspnetcore-core-foundation",
         "name": "ASP.NET Core Foundation (Problem Details, Typed Settings, Health Checks)",
-        "version": "1.0.0",
+        "version": "1.0.1",
         "language": "csharp",
         "stack": "backend-aspnetcore",
         "category": "core",
@@ -345,11 +345,18 @@
           "health-checks"
         ],
         "verify": [
-          "dotnet build --nologo"
+          "dotnet build --nologo",
+          "dotnet test --nologo"
         ]
       },
       "description": "The base the other C# recipes build on: an exception taxonomy (`AppException` with `InvalidInputException`, `ForbiddenException`, `NotFoundException`, `ConflictException`) answered as RFC 9457 problem details by one `IExceptionHandler`, typed settings bound from the `Api` section and validated at startup (`ApiOptions`), and a readiness endpoint `GET /health/ready` from ASP.NET Core health checks. An unexpected exception is logged and answered with 500 without its message.",
       "changelog": [
+        {
+          "version": "1.0.1",
+          "notes": [
+            "`verify` also runs `dotnet test`, so the two tests the recipe ships are checked when it is applied."
+          ]
+        },
         {
           "version": "1.0.0",
           "notes": [
@@ -399,7 +406,7 @@
           "rule": "Signal an expected failure by throwing one of the `AppException` types from `Api.Core.Errors`; never build error responses by hand in a controller. Settings a service needs go into an options class with data annotations, bound and validated like `ApiOptions`, and are read through `IOptions<T>`."
         }
       ],
-      "contentHash": "sha256:f7a9461a7b9f81503e244ad3c6bfe8e0f1267c34f99efecb3e252b056e22176a"
+      "contentHash": "sha256:d8a1425acc2257cba6a06b594a361ab5e5f35ddcf4c2902afa2627b34478aaa4"
     },
     {
       "path": "stacks/csharp/backend-aspnetcore/recipes/delivery/dotnet-delivery-scripts",
@@ -1383,7 +1390,7 @@
         "schemaVersion": 1,
         "id": "node-ioc-container",
         "name": "Node.js Lightweight Type-Safe IoC Container",
-        "version": "1.1.0",
+        "version": "1.1.1",
         "language": "typescript",
         "stack": "backend-node-tsoa",
         "category": "architecture",
@@ -1406,11 +1413,18 @@
           "src/core/di/registry.ts"
         ],
         "verify": [
-          "npm run lint"
+          "npm run lint",
+          "npm run test"
         ]
       },
       "description": "Zero-dependency, reflection-free, type-safe Inversion of Control (IoC) and Dependency Injection (DI) container. Supports singleton and transient registrations, factory providers, dry-run mock swapping, and scoped test overrides without decorator boilerplate.",
       "changelog": [
+        {
+          "version": "1.1.1",
+          "notes": [
+            "`verify` also runs `npm run test`, so the container test the recipe ships is checked when it is applied."
+          ]
+        },
         {
           "version": "1.1.0",
           "notes": [
@@ -1455,7 +1469,7 @@
           "rule": "Bind all repository ports and external gateway adapters (e.g. IPaymentGateway, INotificationGateway) to the container in `registerServices`. Use container.override(token, mockAdapter) in test suites to prevent live side effects without polluting business code with dryRun flags."
         }
       ],
-      "contentHash": "sha256:33e2406eefa0eef5637fffd673afac0cd7a42d2cac4a394f0d88b4b03ea74c4d"
+      "contentHash": "sha256:8813ebb4f24518e638dc883c4b6db0781e65e78c984b0d17f99cd385a6d58241"
     },
     {
       "path": "stacks/typescript/backend-node-tsoa/recipes/architecture/node-strangler-router-facade",
@@ -2121,7 +2135,7 @@
         "schemaVersion": 1,
         "id": "node-characterization-test-harness",
         "name": "Node.js Characterization & Golden Master Test Harness",
-        "version": "1.0.1",
+        "version": "1.0.2",
         "language": "typescript",
         "stack": "backend-node-tsoa",
         "category": "testing",
@@ -2158,6 +2172,12 @@
       "description": "Michael Feathers Golden Master / Characterization Test Harness with PII Redaction and Dry-Run side-effect guards. Enables QA and Coder agents to record deterministic, compliant snapshots of legacy endpoints to verify 100% mathematical parity during Strangler Fig refactoring.",
       "changelog": [
         {
+          "version": "1.0.2",
+          "notes": [
+            "Characterization tests now live under `src/` as `*.characterization.test.ts`. The scaffold's `npm run test` only runs `src/**/*.test.ts`, so tests written to the old `tests/characterization/*.spec.ts` pattern were never run by the test check."
+          ]
+        },
+        {
           "version": "1.0.1",
           "notes": [
             "Rules for code written later (file patterns) moved from Instructions to Conventions; they are no longer applied at install."
@@ -2187,11 +2207,11 @@
       "instructions": [],
       "conventions": [
         {
-          "pattern": "tests/characterization/*.spec.ts",
-          "rule": "Before refactoring any legacy route, create a characterization test recording its baseline behavior. Always use CharacterizationHarness with PiiMasker enabled. When testing mutation routes, set dryRun: true and override external gateway adapters in the IoC container with mocks."
+          "pattern": "src/**/*.characterization.test.ts",
+          "rule": "Before refactoring any legacy route, create a characterization test recording its baseline behavior, next to the route and named `<route>.characterization.test.ts` so `npm run test` (and the job's test check) runs it. Always use CharacterizationHarness with PiiMasker enabled. When testing mutation routes, set dryRun: true and override external gateway adapters in the IoC container with mocks."
         }
       ],
-      "contentHash": "sha256:91992dbc3012b52f4820c41e7bc0e9ed081917e2dc7ab5bb8af8f8077923618a"
+      "contentHash": "sha256:6090db1457447ac31516c308757146ed8516f999997d614c615a1c8b64f7bb53"
     },
     {
       "path": "stacks/typescript/web-admin-react/recipes/delivery/react-delivery-scripts",
