@@ -27,7 +27,7 @@ export interface EditableItem {
   files: ItemFile[];
 }
 
-export interface ItemSummary { kind: Item['kind']; path: string; id: string; name: string; version?: string; stack: string; category?: string }
+export interface ItemSummary { kind: Item['kind']; path: string; id: string; name: string; language: string; version?: string; stack: string; category?: string }
 
 export class StudioError extends Error {
   constructor(message: string, readonly status = 400) { super(message); }
@@ -38,7 +38,7 @@ const ITEM_KINDS = ['stack', 'scaffold', 'recipe'];
 export function listItems(catalog: Catalog): ItemSummary[] {
   const all: Item[] = [...catalog.stacks, ...catalog.scaffolds, ...catalog.recipes];
   return all.map((i) => ({
-    kind: i.kind, path: i.path, id: i.meta.id, name: i.meta.name, stack: i.kind === 'stack' ? i.meta.id : i.meta.stack,
+    kind: i.kind, path: i.path, id: i.meta.id, name: i.meta.name, language: i.meta.language, stack: i.kind === 'stack' ? i.meta.id : i.meta.stack,
     ...(i.kind === 'stack' ? {} : { version: i.meta.version }), ...(i.kind === 'recipe' ? { category: i.meta.category } : {}),
   }));
 }

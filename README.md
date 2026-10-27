@@ -63,10 +63,11 @@ A local editor for items:
 npm run catalog -- studio            # http://127.0.0.1:4310/
 ```
 
-- Each item has form fields for its front matter, Markdown editors for its sections, and a file tree for `files/`.
-- The lint runs while you type. Save is blocked while it reports an error, for example a released version whose files changed or a version without a changelog entry.
-- Save writes only that item's folder, through the same format library the lint and the release use. "New recipe" creates the folder its front matter names.
-- Verify runs the full check with the agent you pick, Harvest runs the command above, and Changes shows the diff for your pull request.
+- The list on the left groups the items by stack, then scaffolds and recipes per category; a dot marks an item with uncommitted changes. Press `/` to search. With no item open, the overview shows what each stack holds.
+- Each item opens in tabs: Overview (title, description, front matter form), Instructions, Conventions, Files (a file tree for `files/`), Changelog and Verify.
+- The lint runs while you type. Save (or Ctrl+S / Cmd+S) is blocked while it reports an error, for example a released version whose files changed or a version without a changelog entry. "New version" raises the version (patch, minor or major) and adds its changelog entry for you to fill.
+- Save writes only that item's folder, through the same format library the lint and the release use. "New recipe" shows the folder its front matter will name before you create the draft.
+- Verify runs the full check with the agent you pick, Harvest runs the command above, and Changes shows the diff for your pull request, per file.
 
 The Studio listens on 127.0.0.1 only and sends nothing anywhere. Verify and Harvest start your own coding agent, which talks to its own model service.
 

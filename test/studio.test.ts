@@ -56,13 +56,20 @@ describe('CAT-28 Catalog Studio', () => {
     assert.equal(page.status, 200);
     assert.match(page.text, /<title>Catalog Studio<\/title>/);
     assert.match(String(page.headers['content-security-policy']), /default-src 'self'/);
-    assert.equal((await raw('GET', '/web/main.js', {})).status, 200);
+    for (const script of ['main', 'sidebar', 'home', 'editor', 'changes', 'version']) assert.equal((await raw('GET', `/web/${script}.js`, {})).status, 200, script);
     assert.equal((await raw('GET', '/api/catalog', { Host: 'evil.example:80' })).status, 403, 'DNS rebinding');
     const foreign = await raw('POST', '/api/lint', { 'Content-Type': 'application/json', Origin: 'https://evil.example' }, '{}');
     assert.equal(foreign.status, 403, 'another site cannot call it');
     assert.equal((await raw('POST', '/api/lint', { 'Content-Type': 'text/plain' }, '{}')).status, 415);
     assert.equal((await raw('GET', '/web/../../package.json', {})).status, 404);
     assert.equal((await call('GET', `/api/item?path=${encodeURIComponent('../outside')}`)).status, 404);
+  });
+
+  it('lists every item with what the list groups it by: kind, name, language, stack and category', async () => {
+    const { data } = await call<{ items: Array<{ kind: string; path: string; name: string; language: string; stack: string; category?: string }> }>('GET', '/api/catalog');
+    const admob = data.items.find((i) => i.path === ADMOB);
+    assert.deepEqual(admob && { kind: admob.kind, language: admob.language, stack: admob.stack, category: admob.category }, { kind: 'recipe', language: 'dart', stack: 'mobile-flutter', category: 'monetization' });
+    assert.ok(data.items.filter((i) => i.kind === 'stack').every((s) => s.name && s.language), 'a stack is shown by its name and language');
   });
 
   it('shows an item with its front matter, Markdown sections and files, and its form schema', async () => {

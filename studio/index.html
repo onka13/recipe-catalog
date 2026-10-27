@@ -9,19 +9,24 @@
 </head>
 <body>
   <header class="top">
-    <div class="brand"><strong>Catalog Studio</strong> <code id="root"></code></div>
+    <a class="brand" href="#" title="Catalog overview"><span class="logo" aria-hidden="true"></span><strong>Catalog Studio</strong></a>
+    <code id="root" class="root"></code>
     <nav>
+      <button type="button" id="changes" title="The changed catalog files, as a diff for the pull request">Changes <span id="changes-count" class="badge" hidden></span></button>
+      <button type="button" id="harvest" title="Let your coding agent turn a capability of your project into a recipe">Harvest</button>
       <button type="button" id="new-recipe" class="primary">New recipe</button>
-      <button type="button" id="harvest">Harvest</button>
-      <button type="button" id="changes">Changes</button>
     </nav>
   </header>
   <div class="layout">
     <aside>
-      <input id="filter" type="search" placeholder="Filter items" aria-label="Filter items">
-      <div id="items"></div>
+      <div class="aside-head">
+        <input id="filter" type="search" placeholder="Search by name, id or category" aria-label="Search items" autocomplete="off">
+        <p id="filter-result" class="filter-result" aria-live="polite"></p>
+      </div>
+      <nav id="items" aria-label="Catalog items"></nav>
     </aside>
     <main id="main"></main>
   </div>
+  <div id="toasts" class="toasts" aria-live="polite"></div>
 </body>
 </html>

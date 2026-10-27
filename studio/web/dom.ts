@@ -27,3 +27,11 @@ export function debounce<A extends unknown[]>(fn: (...args: A) => void, ms: numb
     timer = window.setTimeout(() => fn(...args), ms);
   };
 }
+
+/** A short message in the bottom-right corner; errors stay until closed, the rest fade after a few seconds. */
+export function toast(message: string, kind: 'ok' | 'error' = 'ok'): void {
+  const el = h('div', { class: `toast ${kind}`, role: kind === 'error' ? 'alert' : 'status' },
+    h('span', {}, message), h('button', { type: 'button', class: 'ghost icon', 'aria-label': 'Dismiss', onclick: () => el.remove() }, '×'));
+  document.getElementById('toasts')!.append(el);
+  if (kind === 'ok') window.setTimeout(() => el.remove(), 4000);
+}

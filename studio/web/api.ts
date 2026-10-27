@@ -20,7 +20,7 @@ export interface EditableItem {
   files: ItemFile[];
 }
 
-export interface ItemSummary { kind: Kind; path: string; id: string; name: string; version?: string; stack: string; category?: string }
+export interface ItemSummary { kind: Kind; path: string; id: string; name: string; language: string; version?: string; stack: string; category?: string }
 export interface CatalogInfo { root: string; categories: Category[]; items: ItemSummary[] }
 export interface LintResult { path: string; problems: Problem[] }
 export interface SaveResult extends LintResult { saved: boolean; item?: EditableItem }
