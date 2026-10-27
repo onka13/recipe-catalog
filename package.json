@@ -4,6 +4,24 @@
   "private": true,
   "description": "Scaffolds and recipes for every language and project type, as Markdown files, with the tools to lint, check, build and edit them.",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onka13/recipe-catalog.git"
+  },
+  "homepage": "https://github.com/onka13/recipe-catalog#readme",
+  "bugs": {
+    "url": "https://github.com/onka13/recipe-catalog/issues"
+  },
+  "keywords": [
+    "scaffolding",
+    "recipes",
+    "ai-agents",
+    "coding-agents",
+    "code-generation",
+    "flutter",
+    "typescript",
+    "aspnetcore"
+  ],
   "type": "module",
   "bin": {
     "catalog": "dist/src/cli.js"
